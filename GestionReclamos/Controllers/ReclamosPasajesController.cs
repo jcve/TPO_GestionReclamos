@@ -35,7 +35,13 @@ namespace GestionReclamos.Controllers
         }
 
         [HttpGet("Obtener")]
-        public async Task<IActionResult> ObtenerReclamos([FromBody] string temp) // Obtener reclamos - EXTERNO
+        public async Task<IActionResult> ObtenerReclamos([FromBody] string temp) // Obtener reclamos
+        {
+            return null;
+        }
+
+        [HttpGet("Obtener/{id}")]
+        public async Task<IActionResult> ObtenerReclamo() // Obtener reclamo - INTERNO/EXTERNO
         {
             return null;
         }
