@@ -63,7 +63,7 @@ namespace FrontAndApi.Filters
                     // ISSUER
                     ValidateIssuer = true,
                     ValidIssuer = issuer,
-                    // AUDENCIE
+                    // AUDENCIE 
                     ValidateAudience = false,
                     ValidAudience = "",
                     // EXP
