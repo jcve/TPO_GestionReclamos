@@ -1,3 +1,4 @@
+using FrontAndApi.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -33,6 +34,11 @@ namespace GestionReclamos
             services.AddTransient<MySqlConnection>(_ => new MySqlConnection(Configuration["ConnectionStrings:Database"]));
             services.AddSwaggerGen();
 
+            services.AddMvc(option =>
+            {
+                option.Filters.Add(typeof(ValidateTokenFilter));
+                option.EnableEndpointRouting = false;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
