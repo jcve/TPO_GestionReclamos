@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace GestionReclamos.Models
 {
-    public class ResponseReclamoCreado
+    public class ResponseClaimCreated
     {
-        public string Mensaje { get; set; }
-        public int IdReclamo { get; set; }
+        public string Message { get; set; }
+        public int IdClaim { get; set; }
     }
 }
