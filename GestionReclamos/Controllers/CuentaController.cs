@@ -50,13 +50,14 @@ namespace GestionReclamos.Controllers
                     responseLogin.StatusCode = (int)response.StatusCode;
                     responseLogin.Description = "Login exitoso";
                     responseLogin.Token = token.token;
-
-                    return Ok(responseLogin);
                 }
-                else
+                else if((int)response.StatusCode == 401)
                 {
-                    return Ok(responseLogin);
+                    responseLogin.StatusCode = (int)response.StatusCode;
+                    responseLogin.Description = "Usuario y/o contraseña incorrectos";
                 }
+
+                return Ok(responseLogin);
             }
             catch (Exception e)
             {
