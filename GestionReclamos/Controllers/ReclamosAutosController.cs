@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GestionReclamos.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace GestionReclamos.Controllers
         }
 
         [HttpPost("Nuevo")]
-        public async Task<IActionResult> NuevoReclamo([FromBody] string temp) // Nuevo reclamo
+        public async Task<IActionResult> NuevoReclamo([FromBody] RequestReclamoAuto reclamo) // Nuevo reclamo
         {
             return null;
         }
@@ -28,7 +29,7 @@ namespace GestionReclamos.Controllers
         }
 
         [HttpPost("Crear")]
-        public async Task<IActionResult> CrearReclamo([FromBody] string temp) // Crear reclamo - EXTERNO
+        public async Task<IActionResult> CrearReclamo([FromBody] RequestReclamoAuto reclamo) // Crear reclamo - EXTERNO
         {
             return null;
         }
