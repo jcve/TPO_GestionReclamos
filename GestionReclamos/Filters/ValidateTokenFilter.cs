@@ -12,11 +12,11 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace FrontAndApi.Filters
+namespace GestionReclamos.Filters
 {
     public class ValidateTokenFilter : IAsyncActionFilter
     {
-        private readonly string secretKey = "50E25EC9B0517772A7EA5A4078A69E38AE0B48BDFFE1857D63933885829723C8";
+        private readonly string publicKey = "50E25EC9B0517772A7EA5A4078A69E38AE0B48BDFFE1857D63933885829723C8";
         private readonly string issuer = "SSO";
         public ValidateTokenFilter()
         {
@@ -72,7 +72,7 @@ namespace FrontAndApi.Filters
                     // SIGN
                     ValidateIssuerSigningKey = true,
                     RequireSignedTokens = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(publicKey))
                 };
 
                 var tokenHandler = new JwtSecurityTokenHandler();
