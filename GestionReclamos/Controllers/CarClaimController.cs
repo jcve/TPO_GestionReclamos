@@ -1,8 +1,14 @@
-﻿using GestionReclamos.Models;
+﻿using GestionReclamos.Application.Common.Interfaces;
+using GestionReclamos.Domain.Entities;
+using GestionReclamos.Models;
+using GestionReclamos.Models.Response;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace GestionReclamos.Controllers
@@ -11,21 +17,122 @@ namespace GestionReclamos.Controllers
     [Route("Claim/Car")]
     public class CarClaimController : ControllerBase
     {
-        public CarClaimController()
+        private readonly ILogger<CarClaimController> _logger;
+        private readonly IGestionReclamosDbContext _context;
+        public CarClaimController(ILogger<CarClaimController> logger, IGestionReclamosDbContext context)
         {
-
+            _logger = logger;
+            _context = context;
         }
 
         [HttpPost("New")]
         public async Task<IActionResult> NewClaim([FromBody] RequestCarClaim reclamo) // Nuevo reclamo
         {
-            return null;
+            try
+            {
+                ////Carga de estados principal
+                //var dbSet = _context.Set<Estado>();
+                //dbSet.AddRange(new List<Estado>
+                //{   new Estado
+                //    {
+                //        Descripcion = "Nuevo"
+                //    },
+                //    new Estado
+                //    {
+                //        Descripcion = "En progreso"
+                //    },
+                //    new Estado
+                //    {
+                //        Descripcion = "Resuelto"
+                //    },
+                //    new Estado
+                //    {
+                //        Descripcion = "Cerrado"
+                //    }
+                //});
+                //var h = _context.SaveChanges<Estado>();
+
+                //verificar que exista el cliente
+                var usr = _context.Set<Usuario>().Where(u => u.Correo == reclamo.Client).FirstOrDefault();
+                int idCliente = 0;
+                //si no existe, crearlo
+                if (usr == null)
+                {
+                    var nuevoUsr = new Usuario { Correo = reclamo.Client };
+                    _context.Set<Usuario>().Add(nuevoUsr);
+                    await _context.SaveChangesAsync<Usuario>();
+                    idCliente = nuevoUsr.Id;
+                    //idCliente = _context.Set<Usuario>().Where(u => u.Correo == reclamo.Client).FirstOrDefault().Id;
+                }
+                else 
+                {
+                    idCliente = usr.Id;
+                }
+
+                var dbSetCarClaims = _context.Set<ReclamoAuto>();
+                var nuevoReclamo = new ReclamoAuto
+                {
+                    FechaCreacion = DateTime.Now,
+                    IdCliente = idCliente,
+                    Descripcion = reclamo.Description,
+                    Patente = reclamo.Plate,
+                    Modelo = reclamo.Model,
+                    Marca = reclamo.Brand,
+                    Aeropuerto = reclamo.Airport,
+                    IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == "Nuevo").FirstOrDefault().Id,
+                    UltimaModificacion = DateTime.Now
+                };
+
+                dbSetCarClaims.Add(nuevoReclamo);
+            
+                var cantRegistrosInsertados = await _context.SaveChangesAsync<ReclamoAuto>();
+
+                if (cantRegistrosInsertados.Equals(1)) 
+                {
+                    
+                    return Ok(new ResponseClaimCreated() { IdClaim = nuevoReclamo.Id, Message = "OK" });
+                }
+
+                return Ok(new ResponseClaimCreated() { Message = "ERROR" });
+
+            }
+            catch (Exception ex )
+            {
+                var t = ex;
+                throw;
+            }
         }
 
         [HttpPost("Modify")]
-        public async Task<IActionResult> ModifyClaim([FromBody] string temp) // Modificar reclamo
+        public async Task<IActionResult> ModifyClaim([FromBody] RequestModifyCarClaim reclamo) // Modificar reclamo
         {
-            return null;
+            //verificar que exista el reclamo
+            var dbSetCarClaims = _context.Set<ReclamoAuto>();
+            var claim = await dbSetCarClaims.FindAsync(reclamo.Id);
+            //modificar reclamo
+            if (claim != null) 
+            {
+                claim.Descripcion = reclamo.Description;
+                claim.Patente = reclamo.Plate;
+                claim.Modelo = reclamo.Model;
+                claim.Marca = reclamo.Brand;
+                claim.Aeropuerto = reclamo.Airport;
+                claim.IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
+                claim.UltimaModificacion = DateTime.Now;
+
+                dbSetCarClaims.Update(claim);
+
+                var cantRegistrosInsertados = await _context.SaveChangesAsync<ReclamoAuto>();
+
+                if (cantRegistrosInsertados.Equals(1))
+                {
+
+                    return Ok(new ResponseClaimModify() { IdClaim = reclamo.Id, Message = "OK" });
+                }
+            }
+
+            return Ok(new ResponseClaimModify() { Message = "ERROR" });
+
         }
 
         [HttpPost("Create")]
@@ -35,15 +142,30 @@ namespace GestionReclamos.Controllers
         }
 
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAllClaims([FromBody] string temp) // Obtener reclamos
+        public async Task<IActionResult> GetAllClaims() // Obtener reclamos
         {
-            return null;
+            var CarClaims = await _context.Set<ReclamoAuto>().ToListAsync();
+
+            return Ok(new ResponseCarClaimAll() {CarClaims =  CarClaims });
         }
 
         [HttpGet("Get/{id}")]
-        public async Task<IActionResult> GetClaim() // Obtener reclamo - INTERNO/EXTERNO
+        public async Task<IActionResult> GetClaim(int id) // Obtener reclamo - INTERNO/EXTERNO
         {
-            return null;
+            try
+            {
+                var claim = await _context.Set<ReclamoAuto>().FindAsync(id);
+                var res = new ResponseCarClaimAll();
+                if (claim != null) 
+                {
+                    res.CarClaims.Add(claim);
+                }
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }            
         }
     }
 }

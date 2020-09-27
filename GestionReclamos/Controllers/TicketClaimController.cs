@@ -1,5 +1,10 @@
-﻿using GestionReclamos.Models;
+﻿using GestionReclamos.Application.Common.Interfaces;
+using GestionReclamos.Domain.Entities;
+using GestionReclamos.Models;
+using GestionReclamos.Models.Response;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,21 +17,94 @@ namespace GestionReclamos.Controllers
     [Route("Claim/Ticket")]
     public class TicketClaimController : ControllerBase
     {
-        public TicketClaimController()
+        private readonly ILogger<TicketClaimController> _logger;
+        private readonly IGestionReclamosDbContext _context;
+        public TicketClaimController(ILogger<TicketClaimController> logger, IGestionReclamosDbContext context)
         {
-
+            _logger = logger;
+            _context = context;
         }
 
         [HttpPost("New")]
         public async Task<IActionResult> NewClaim([FromBody] RequestTicketClaim reclamo) // Nuevo reclamo
         {
-            return null;
+            try
+            {               
+                //verificar que exista el cliente
+                var usr = _context.Set<Usuario>().Where(u => u.Correo == reclamo.Client).FirstOrDefault();
+                int idCliente = 0;
+                //si no existe, crearlo
+                if (usr == null)
+                {
+                    var nuevoUsr = new Usuario { Correo = reclamo.Client };
+                    _context.Set<Usuario>().Add(nuevoUsr);
+                    await _context.SaveChangesAsync<Usuario>();
+                    idCliente = nuevoUsr.Id;                    
+                }
+                else
+                {
+                    idCliente = usr.Id;
+                }
+
+                var dbSetTicketClaims = _context.Set<ReclamoPasaje>();
+                var nuevoReclamo = new ReclamoPasaje
+                {
+                    FechaCreacion = DateTime.Now,
+                    IdCliente = idCliente,
+                    Descripcion = reclamo.Description,
+                    Aerolinea = reclamo.Airline,
+                    FechaVuelo = reclamo.FlightDate,                    
+                    IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == "Nuevo").FirstOrDefault().Id,
+                    UltimaModificacion = DateTime.Now                    
+                };
+
+                dbSetTicketClaims.Add(nuevoReclamo);
+
+                var cantRegistrosInsertados = await _context.SaveChangesAsync<ReclamoPasaje>();
+
+                if (cantRegistrosInsertados.Equals(1))
+                {
+
+                    return Ok(new ResponseClaimCreated() { IdClaim = nuevoReclamo.Id, Message = "OK" });
+                }
+
+                return Ok(new ResponseClaimCreated() { Message = "ERROR" });
+
+            }
+            catch (Exception ex)
+            {
+                var t = ex;
+                throw;
+            }
         }
 
         [HttpPost("Modify")]
-        public async Task<IActionResult> ModifyClaim([FromBody] string temp) // Modificar reclamo
+        public async Task<IActionResult> ModifyClaim([FromBody] RequestModifyTicketClaim reclamo) // Modificar reclamo
         {
-            return null;
+            //verificar que exista el reclamo
+            var dbSetTicketClaims = _context.Set<ReclamoPasaje>();
+            var claim = await dbSetTicketClaims.FindAsync(reclamo.Id);
+            //modificar reclamo
+            if (claim != null)
+            {
+                claim.FechaVuelo = reclamo.FlightDate;
+                claim.Aerolinea = reclamo.Airline;
+                claim.Descripcion = reclamo.Description;
+                claim.IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
+                claim.UltimaModificacion = DateTime.Now;
+
+                dbSetTicketClaims.Update(claim);
+
+                var cantRegistrosInsertados = await _context.SaveChangesAsync<ReclamoPasaje>();
+
+                if (cantRegistrosInsertados.Equals(1))
+                {
+
+                    return Ok(new ResponseClaimModify() { IdClaim = reclamo.Id, Message = "OK" });
+                }
+            }
+
+            return Ok(new ResponseClaimModify() { Message = "ERROR" });
         }
 
         [HttpPost("Create")]
@@ -36,15 +114,30 @@ namespace GestionReclamos.Controllers
         }
 
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAllClaims([FromBody] string temp) // Obtener reclamos
+        public async Task<IActionResult> GetAllClaims() // Obtener reclamos
         {
-            return null;
+            var TicketClaims = await _context.Set<ReclamoPasaje>().ToListAsync();
+
+            return Ok(new ResponseTicketClaimAll() { TicketClaims = TicketClaims });
         }
 
         [HttpGet("Get/{id}")]
-        public async Task<IActionResult> GetClaim() // Obtener reclamo - INTERNO/EXTERNO
+        public async Task<IActionResult> GetClaim(int id) // Obtener reclamo - INTERNO/EXTERNO
         {
-            return null;
+            try
+            {
+                var claim = await _context.Set<ReclamoPasaje>().FindAsync(id);
+                var res = new ResponseTicketClaimAll();
+                if (claim != null)
+                {
+                    res.TicketClaims.Add(claim);
+                }
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
     }
 }

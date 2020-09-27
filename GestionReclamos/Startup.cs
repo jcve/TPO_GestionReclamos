@@ -1,8 +1,11 @@
+using GestionReclamos.Application.Common.Interfaces;
 using GestionReclamos.Filters;
+using GestionReclamos.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -31,7 +34,14 @@ namespace GestionReclamos
                 configuration.RootPath = "ClientApp/build";
             });
 
-            services.AddTransient<MySqlConnection>(_ => new MySqlConnection(Configuration["ConnectionStrings:Database"]));
+
+
+
+            //services.AddTransient<MySqlConnection>(_ => new MySqlConnection(Configuration["ConnectionStrings:Database"]));
+
+            services.AddDbContext<IGestionReclamosDbContext, GestionReclamosDbContext>(options =>
+               options.UseMySQL(Configuration.GetConnectionString("Database")));
+
             services.AddSwaggerGen();
 
             services.AddMvc(option =>
