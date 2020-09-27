@@ -14,7 +14,7 @@ namespace GestionReclamos.Controllers
 {
 
     [ApiController]
-    [Route("Claim/Ticket")]
+    [Route("/api/Claim/Ticket")]
     public class TicketClaimController : ControllerBase
     {
         private readonly ILogger<TicketClaimController> _logger;

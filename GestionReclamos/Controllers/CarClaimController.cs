@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace GestionReclamos.Controllers
 {
     [ApiController]
-    [Route("Claim/Car")]
+    [Route("api/Claim/Car")]
     public class CarClaimController : ControllerBase
     {
         private readonly ILogger<CarClaimController> _logger;

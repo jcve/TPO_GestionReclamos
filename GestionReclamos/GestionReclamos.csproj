@@ -30,6 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GestionReclamos.Application\GestionReclamos.Application.csproj" />
+    <ProjectReference Include="..\GestionReclamos.Domain\GestionReclamos.Domain.csproj" />
     <ProjectReference Include="..\GestionReclamos.Infrastructure\GestionReclamos.Infrastructure.csproj" />
   </ItemGroup>
 
