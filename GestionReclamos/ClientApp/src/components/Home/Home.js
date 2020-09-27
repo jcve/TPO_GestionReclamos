@@ -1,10 +1,11 @@
 import React,{ useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
-import { ACCESS_TOKEN_NAME, API_BASE_URL } from '../../constants/apiContants';
+import { ACCESS_TOKEN_NAME } from '../../constants/apiContants';
 import axios from 'axios'
+
 function Home(props) {
     useEffect(() => {
-        axios.get('api/claim/car', { headers: { 'Authorization': localStorage.getItem(ACCESS_TOKEN_NAME) }})
+        axios.get('api/claim/car/GetAll', { headers: { 'Authorization': localStorage.getItem(ACCESS_TOKEN_NAME) }})
         .then(function (response) {
             if(response.status !== 200){
               redirectToLogin()
@@ -19,7 +20,7 @@ function Home(props) {
     }
     return(
         <div className="mt-2">
-            Home page content
+            Test
         </div>
     )
 }

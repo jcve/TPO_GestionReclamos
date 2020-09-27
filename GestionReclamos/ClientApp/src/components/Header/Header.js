@@ -8,13 +8,13 @@ function Header(props) {
     }
     let title = capitalize(props.location.pathname.substring(1,props.location.pathname.length))
     if(props.location.pathname === '/') {
-        title = 'Welcome'
+        title = 'Gestion de Reclamos'
     }
     function renderLogout() {
         if(props.location.pathname === '/home'){
             return(
                 <div className="ml-auto">
-                    <button className="btn btn-danger" onClick={() => handleLogout()}>Logout</button>
+                    <button className="btn btn-danger" onClick={() => handleLogout()}>Desconectarse</button>
                 </div>
             )
         }

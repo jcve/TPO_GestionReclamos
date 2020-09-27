@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
 import axios from 'axios';
 import './LoginForm.css';
-import {API_BASE_URL, ACCESS_TOKEN_NAME} from '../../constants/apiContants';
+import {ACCESS_TOKEN_NAME} from '../../constants/apiContants';
 import { withRouter } from "react-router-dom";
 
 function LoginForm(props) {
     const [state , setState] = useState({
-        email : "",
+        username : "",
         password : "",
         successMessage: null
     })
@@ -21,25 +21,25 @@ function LoginForm(props) {
     const handleSubmitClick = (e) => {
         e.preventDefault();
         const payload={
-            "username":state.email,
+            "username": state.username,
             "password":state.password,
         }
         axios.post('api/Account/Login', payload)
             .then(function (response) {
                 if(response.status === 200){
-                    setState(prevState => ({
-                        ...prevState,
-                        'successMessage' : 'Login exitoso. Redirigiendo a la home page..'
-                    }))
-                    localStorage.setItem(ACCESS_TOKEN_NAME,response.data.token);
-                    redirectToHome();
-                    props.showError(null)
-                }
-                else if(response.code === 204){
-                    props.showError("Usuario y contraseña no coinciden");
+                    if (response.data.token != null) {
+                        setState(prevState => ({
+                            ...prevState,
+                            'successMessage': 'Login exitoso. Redirigiendo al sistema..'
+                        }));
+                        localStorage.setItem(ACCESS_TOKEN_NAME, response.data.token);
+                        redirectToHome();
+                    }
+                    if(response.data.token === "")
+                    props.showError(response.data.statusCode + " - " + response.data.description);
                 }
                 else{
-                    props.showError("Nombre de usuario no existe.");
+                    props.showError("Ocurrio un error en la comunicacion, intente nuevamente.");
                 }
             })
             .catch(function (error) {
@@ -47,40 +47,40 @@ function LoginForm(props) {
             });
     }
     const redirectToHome = () => {
-        props.updateTitle('Home')
+        props.updateTitle('Inicio')
         props.history.push('/home');
     }
     const redirectToRegister = () => {
         props.history.push('/register'); 
-        props.updateTitle('Register');
+        props.updateTitle('Registro');
     }
     return(
         <div className="card col-12 col-lg-4 login-card mt-2 hv-center">
             <form>
                 <div className="form-group text-left">
-                <label htmlFor="exampleInputEmail1">Email</label>
-                <input type="email" 
+                <label htmlFor="exampleInputEmail1">Usuario: </label>
+                <input type="text" 
                        className="form-control" 
-                       id="email" 
+                       id="username" 
                        aria-describedby="emailHelp" 
-                       placeholder="Ingresar email" 
-                       value={state.email}
+                       placeholder="Ingresar usuario" 
+                        value={state.username}
                        onChange={handleChange}
                 />
-                <small id="emailHelp" className="form-text text-muted">No compartiremos su email con nadie.</small>
                 </div>
                 <div className="form-group text-left">
-                <label htmlFor="exampleInputPassword1">Password</label>
+                <label htmlFor="exampleInputPassword1">Contraseña: </label>
                 <input type="password" 
                        className="form-control" 
                        id="password" 
-                       placeholder="Password"
+                       placeholder="Ingresar contraseña"
                        value={state.password}
                        onChange={handleChange} 
                 />
                 </div>
                 <div className="form-check">
                 </div>
+                <small id="emailHelp" className="form-text text-muted">Nunca comparta sus datos con nadie.</small><br />
                 <button 
                     type="submit" 
                     className="btn btn-primary"
@@ -91,8 +91,8 @@ function LoginForm(props) {
                 {state.successMessage}
             </div>
             <div className="registerMessage">
-                <span>No tiene cuenta? </span>
-                <span className="loginText" onClick={() => redirectToRegister()}>Register</span> 
+                <span>¿No tiene una cuenta? </span><br />
+                <span className="loginText" onClick={() => redirectToRegister()}>Registrate aqui!</span> 
             </div>
         </div>
     )

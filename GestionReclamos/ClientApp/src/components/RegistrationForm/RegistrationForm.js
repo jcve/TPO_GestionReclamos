@@ -1,15 +1,20 @@
 import React, {useState} from 'react';
 import axios from 'axios';
 import './RegistrationForm.css';
-import {API_BASE_URL, ACCESS_TOKEN_NAME} from '../../constants/apiContants';
+import {ACCESS_TOKEN_NAME} from '../../constants/apiContants';
 import { withRouter } from "react-router-dom";
 
 function RegistrationForm(props) {
     const [state , setState] = useState({
-        email : "",
-        password : "",
+        name: "",
+        surname: "",
+        mail: "",
+        birthday: "",
+        phone: "",
+        username: "",
+        password: "",
         confirmPassword: "",
-        successMessage: null
+        successMessage: null,
     })
     const handleChange = (e) => {
         const {id , value} = e.target   
@@ -19,36 +24,44 @@ function RegistrationForm(props) {
         }))
     }
     const sendDetailsToServer = () => {
-        if(state.email.length && state.password.length) {
+        if (state.name.length && state.surname.length && state.mail.length && state.birthday.length && state.phone.length && state.username.length && state.password.length && state.confirmPassword.length) {
             props.showError(null);
-            const payload={
-                "email":state.email,
-                "password":state.password,
+            const payload = {
+                "name": state.name,
+                "surname": state.surname,
+                "mail": state.mail,
+                "birthday": state.birthday,
+                "phone": state.phone,
+                "username": state.username,
+                "password":state.password
             }
             axios.post('api/Account/Signup', payload)
                 .then(function (response) {
                     if(response.status === 200){
-                        setState(prevState => ({
-                            ...prevState,
-                            'successMessage' : 'Registracion exitosa. Redirigiendo a la home page..'
-                        }))
-                        localStorage.setItem(ACCESS_TOKEN_NAME,response.data.token);
-                        redirectToHome();
-                        props.showError(null)
+                        if (response.data.statusCode == 200) {
+                            setState(prevState => ({
+                                ...prevState,
+                                'successMessage': 'Login exitoso. Redirigiendo al sistema..'
+                            }));
+                            localStorage.setItem(ACCESS_TOKEN_NAME, response.data.token);
+                            redirectToHome();
+                        }
+                        if (response.data.statusCode != 200)
+                            props.showError(response.data.statusCode + " - " + response.data.description);
                     } else{
-                        props.showError("Un error ha ocurrido");
+                        props.showError("Ocurrio un error en la comunicacion, intente nuevamente.");
                     }
                 })
                 .catch(function (error) {
                     console.log(error);
                 });    
         } else {
-            props.showError('Ingrese un usuario y contraseña valida')    
+            props.showError('Ingrese todos los datos solicitados.')    
         }
         
     }
     const redirectToHome = () => {
-        props.updateTitle('Home')
+        props.updateTitle('Inicio')
         props.history.push('/home');
     }
     const redirectToLogin = () => {
@@ -67,33 +80,84 @@ function RegistrationForm(props) {
         <div className="card col-12 col-lg-4 login-card mt-2 hv-center">
             <form>
                 <div className="form-group text-left">
-                <label htmlFor="exampleInputEmail1">Email</label>
-                <input type="email" 
+                <label htmlFor="exampleInputUsername1">Usuario: </label>
+                <input type="text" 
                        className="form-control" 
-                       id="email" 
-                       aria-describedby="emailHelp" 
-                       placeholder="Ingresar email" 
-                       value={state.email}
+                       id="username" 
+                       placeholder="Ingresa tu nuevo usuario" 
+                       value={state.username}
                        onChange={handleChange}
                 />
-                <small id="emailHelp" className="form-text text-muted">No compartiremos su mail con nadie.</small>
                 </div>
                 <div className="form-group text-left">
-                    <label htmlFor="exampleInputPassword1">Password</label>
+                    <label htmlFor="exampleInputName1">Nombre: </label>
+                    <input type="text"
+                        className="form-control"
+                        id="name"
+                        placeholder="Ingresa tu nombre"
+                        value={state.name}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="form-group text-left">
+                    <label htmlFor="exampleInputEmail1">Apellido: </label>
+                    <input type="text"
+                        className="form-control"
+                        id="surname"
+                        placeholder="Ingresa tu apellido"
+                        value={state.surname}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="form-group text-left">
+                    <label htmlFor="exampleInputEmail1">Correo: </label>
+                    <input type="email"
+                        className="form-control"
+                        id="mail"
+                        placeholder="micasilla@correo.com"
+                        value={state.mail}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="form-group text-left">
+                    <label htmlFor="exampleInputEmail1">Fecha de nacimiento: </label>
+                    <input type="text"
+                        className="form-control"
+                        id="birthday"
+                        aria-describedby="emailHelp"
+                        placeholder="YYYYMMDD"
+                        value={state.birthday}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="form-group text-left">
+                    <label htmlFor="exampleInputEmail1">Telefono: </label>
+                    <input type="text"
+                        className="form-control"
+                        id="phone"
+                        aria-describedby="emailHelp"
+                        placeholder="Ingresa tu telefono/celular"
+                        value={state.phone}
+                        onChange={handleChange}
+                    />
+                </div>
+
+                <div className="form-group text-left">
+                    <label htmlFor="exampleInputPassword1">Contraseña: </label>
                     <input type="password" 
                         className="form-control" 
                         id="password" 
-                        placeholder="Password"
+                        placeholder="Ingresa la contraseña"
                         value={state.password}
                         onChange={handleChange} 
                     />
                 </div>
                 <div className="form-group text-left">
-                    <label htmlFor="exampleInputPassword1">Confirmar Password</label>
+                    <label htmlFor="exampleInputPassword1">Confirmar Contraseña: </label>
                     <input type="password" 
                         className="form-control" 
                         id="confirmPassword" 
-                        placeholder="Confirmar Password"
+                        placeholder="Confirme la contraseña"
                         value={state.confirmPassword}
                         onChange={handleChange} 
                     />
@@ -103,15 +167,16 @@ function RegistrationForm(props) {
                     className="btn btn-primary"
                     onClick={handleSubmitClick}
                 >
-                    Registrar
+                    Registrarme
                 </button>
             </form>
             <div className="alert alert-success mt-2" style={{display: state.successMessage ? 'block' : 'none' }} role="alert">
                 {state.successMessage}
             </div>
+            <br />
             <div className="mt-2">
-                <span>Ya posee una cuenta? </span>
-                <span className="loginText" onClick={() => redirectToLogin()}>Login aqui</span> 
+                <span>¿Ya tienes una cuenta? </span><br />
+                <span className="loginText" onClick={() => redirectToLogin()}>Ingresa!</span> 
             </div>
             
         </div>

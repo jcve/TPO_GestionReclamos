@@ -14,10 +14,16 @@ RUN apt-get install -y nodejs
 # copy csproj and restore as distinct layers
 COPY *.sln .
 COPY GestionReclamos/*.csproj ./GestionReclamos/
+COPY GestionReclamos.Application/*.csproj ./GestionReclamos.Application/
+COPY GestionReclamos.Domain/*.csproj ./GestionReclamos.Domain/
+COPY GestionReclamos.Infrastructure/*.csproj ./GestionReclamos.Infrastructure/
 RUN dotnet restore
 
 # copy everything else and build app
 COPY GestionReclamos/. ./GestionReclamos/
+COPY GestionReclamos.Application/. ./GestionReclamos.Application/
+COPY GestionReclamos.Domain/. ./GestionReclamos.Domain/
+COPY GestionReclamos.Infrastructure/. ./GestionReclamos.Infrastructure/
 WORKDIR /app/GestionReclamos
 RUN dotnet publish -c Release -o out
 
