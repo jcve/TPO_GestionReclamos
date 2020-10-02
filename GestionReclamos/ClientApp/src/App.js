@@ -5,6 +5,7 @@ import LoginForm from './components/LoginForm/LoginForm';
 import RegistrationForm from './components/RegistrationForm/RegistrationForm';
 import Home from './components/Home/Home';
 import PrivateRoute from './utils/PrivateRoute';
+import CreateClaimCar from './components/CreateClaimCar/CreateClaimCar';
 import {
   BrowserRouter as Router,
   Switch,
@@ -32,6 +33,9 @@ function App() {
             </Route>
             <PrivateRoute path="/home">
               <Home/>
+            </PrivateRoute>
+            <PrivateRoute path="/claims/create/car">
+              <CreateClaimCar showError={updateErrorMessage} updateTitle={updateTitle}/>
             </PrivateRoute>
           </Switch>
           <AlertComponent errorMessage={errorMessage} hideError={updateErrorMessage}/>

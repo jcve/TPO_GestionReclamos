@@ -11,7 +11,7 @@ function Header(props) {
         title = 'Gestion de Reclamos'
     }
     function renderLogout() {
-        if(props.location.pathname === '/home'){
+        if(props.location.pathname != '/login' || props.location.pathname != '/register'){
             return(
                 <div className="ml-auto">
                     <button className="btn btn-danger" onClick={() => handleLogout()}>Desconectarse</button>
