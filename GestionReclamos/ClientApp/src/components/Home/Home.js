@@ -22,6 +22,9 @@ function Home(props) {
     function redirectToClaimsCar() {
         props.history.push('/claims/car');
     }
+    function redirectToClaimsTicket() {
+        props.history.push('/claims/ticket');
+    }
 
     function redirectToCreateClaimTicket() {
         props.history.push('/claims/create/ticket');
@@ -45,6 +48,11 @@ function Home(props) {
                 className="btn btn-primary"
                 onClick={redirectToClaimsCar}
             >Ver Reclamos Auto</button>
+            <button
+                type="submit"
+                className="btn btn-primary"
+                onClick={redirectToClaimsTicket}
+            >Ver Reclamos Pasajes</button>
         </div>
     )
 }

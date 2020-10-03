@@ -15,6 +15,7 @@ import AlertComponent from './components/AlertComponent/AlertComponent';
 import CreateClaimTicket from './components/CreateClaimTicket/CreateClaimTicket';
 import CreateClaimCar from './components/CreateClaimCar/CreateClaimCar';
 import ClaimsCar from './components/Claims/ClaimsCar';
+import ClaimsTicket from './components/Claims/ClaimsTicket';
 
 function App() {
     const [title, updateTitle] = useState(null);
@@ -45,6 +46,9 @@ function App() {
                         </PrivateRoute>
                         <PrivateRoute path="/claims/car">
                             <ClaimsCar showError={updateErrorMessage} updateTitle={updateTitle} />
+                        </PrivateRoute>
+                        <PrivateRoute path="/claims/ticket">
+                            <ClaimsTicket showError={updateErrorMessage} updateTitle={updateTitle} />
                         </PrivateRoute>
                     </Switch>
                     <AlertComponent errorMessage={errorMessage} hideError={updateErrorMessage} />

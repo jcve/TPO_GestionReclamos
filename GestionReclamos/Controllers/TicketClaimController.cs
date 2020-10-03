@@ -116,7 +116,43 @@ namespace GestionReclamos.Controllers
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAllClaims() // Obtener reclamos
         {
-            var TicketClaims = await _context.Set<ReclamoPasaje>().ToListAsync();
+            var TicketClaims = await _context.Set<ReclamoPasaje>()
+              .Join(
+                    _context.Set<Estado>(),
+                    reclamoPasaje => reclamoPasaje.IdEstado,
+                    estado => estado.Id,
+                    (reclamoPasaje, estado) => new ReclamoPasajeVM
+                    {
+                        Estado = estado.Descripcion,
+                        Id = reclamoPasaje.Id,
+                        FechaCreacion = reclamoPasaje.FechaCreacion,
+                        IdCliente = reclamoPasaje.IdCliente,
+                        Descripcion = reclamoPasaje.Descripcion,
+                        Aerolinea = reclamoPasaje.Aerolinea,
+                        FechaVuelo = reclamoPasaje.FechaVuelo,
+                        IdEstado = reclamoPasaje.IdEstado,
+                        UltimaModificacion = reclamoPasaje.UltimaModificacion
+                    }
+                )
+               .Join
+                (
+                    _context.Set<Usuario>(),
+                    reclamoPasaje => reclamoPasaje.IdCliente,
+                    usuario => usuario.Id,
+                    (reclamoPasaje, usuario) => new ReclamoPasajeVM
+                    {
+                        Cliente = usuario.Correo,
+                        Estado = reclamoPasaje.Estado,
+                        Id = reclamoPasaje.Id,
+                        FechaCreacion = reclamoPasaje.FechaCreacion,
+                        IdCliente = reclamoPasaje.IdCliente,
+                        Descripcion = reclamoPasaje.Descripcion,
+                        Aerolinea = reclamoPasaje.Aerolinea,
+                        FechaVuelo = reclamoPasaje.FechaVuelo,
+                        IdEstado = reclamoPasaje.IdEstado,
+                        UltimaModificacion = reclamoPasaje.UltimaModificacion
+                    }
+                ).ToListAsync();
 
             return Ok(new ResponseTicketClaimAll() { TicketClaims = TicketClaims });
         }
@@ -130,7 +166,11 @@ namespace GestionReclamos.Controllers
                 var res = new ResponseTicketClaimAll();
                 if (claim != null)
                 {
-                    res.TicketClaims.Add(claim);
+                    res.TicketClaims.Add(new ReclamoPasajeVM()
+                    {
+                        //TODO corregir
+                        Estado = claim.IdEstado.ToString()
+                    });
                 }
                 return Ok(res);
             }

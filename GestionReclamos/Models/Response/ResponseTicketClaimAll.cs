@@ -10,8 +10,14 @@ namespace GestionReclamos.Models.Response
     {
         public ResponseTicketClaimAll()
         {
-            TicketClaims = new List<ReclamoPasaje>();
+            TicketClaims = new List<ReclamoPasajeVM>();
         }
-        public List<ReclamoPasaje> TicketClaims { get; set; }
+        //public List<ReclamoPasaje> TicketClaims { get; set; }
+        public List<ReclamoPasajeVM> TicketClaims { get; set; }
+    }
+    public class ReclamoPasajeVM : ReclamoPasaje
+    {
+        public string Cliente { get; set; }
+        public string Estado { get; set; }
     }
 }
