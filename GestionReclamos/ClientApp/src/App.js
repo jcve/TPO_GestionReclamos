@@ -12,6 +12,7 @@ import {
   Route
 } from "react-router-dom";
 import AlertComponent from './components/AlertComponent/AlertComponent';  
+import CreateClaimTicket from './components/CreateClaimTicket/CreateClaimTicket';
 
 function App() {
   const [title, updateTitle] = useState(null);
@@ -36,6 +37,9 @@ function App() {
             </PrivateRoute>
             <PrivateRoute path="/claims/create/car">
               <CreateClaimCar showError={updateErrorMessage} updateTitle={updateTitle}/>
+            </PrivateRoute>
+            <PrivateRoute path="/claims/create/ticket">
+              <CreateClaimTicket showError={updateErrorMessage} updateTitle={updateTitle}/>
             </PrivateRoute>
           </Switch>
           <AlertComponent errorMessage={errorMessage} hideError={updateErrorMessage}/>

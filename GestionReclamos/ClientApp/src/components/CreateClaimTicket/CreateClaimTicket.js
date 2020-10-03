@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import './CreateClaimCar.css';
+import './CreateClaimTicket.css';
 import { withRouter } from "react-router-dom";
 import axios from 'axios';
 import { ACCESS_TOKEN_NAME } from '../../constants/apiContants';
 
-function CreateClaimCar(props) {
+function CreateClaimTicket(props) {
     const [state , setState] = useState({
         client : '',
         description : '',
-        plate : '',
-        model: '',
-        brand : '',
-        airport : ''
+        flightDate : new Date(),
+        airline: '',
+        time : ''
     })
 
     const handleChange = (e) => {
@@ -27,19 +26,18 @@ function CreateClaimCar(props) {
         props.history.push('/home');
     }
 
-    const CreateClaim_Car = () => {
-        if (state.client.length && state.plate.length && state.plate.length && state.model.length && state.brand.length && state.airport.length) {
+    const CreateClaim_Ticket = () => {
+        if (state.client.length && state.time.length && state.airline.length) {
             props.showError(null);
+            const fecha = new Date(state.flightDate + " " + state.time);
             const payload = {
                 "client" : state.client,
                 "description" : state.description,
-                "plate" : state.plate,
-                "model": state.model,
-                "brand" : state.brand,
-                "airport" : state.airport
+                "flightDate" : fecha,
+                "airline": state.airline
             }
-            
-            axios.post('/api/Claim/Car/New', payload, { headers: { 'Authorization': localStorage.getItem(ACCESS_TOKEN_NAME) }})
+            console.log(payload);
+            axios.post('/api/Claim/Ticket/New', payload, { headers: { 'Authorization': localStorage.getItem(ACCESS_TOKEN_NAME) }})
                 .then(function (response) {
                     if(response.status == 200){
                         console.log(response.data)
@@ -62,7 +60,7 @@ function CreateClaimCar(props) {
 
     const handleSubmitClick = (e) => {
         e.preventDefault();
-        CreateClaim_Car()    
+        CreateClaim_Ticket()    
     }
 
     return(
@@ -84,47 +82,37 @@ function CreateClaimCar(props) {
                        className="form-control" 
                        id="description" 
                        placeholder="..." 
-                       value={state.Client}
+                       value={state.description}
                        onChange={handleChange}
                 />
                 </div>
                 <div className="form-group text-left">
-                <label htmlFor="exampleInputPlate">Patente: </label>
-                <input type="text" 
+                <label htmlFor="exampleInputFlightDate">Fecha de vuelo: </label>
+                <input type="date" 
                        className="form-control" 
-                       id="plate" 
-                       placeholder="AA2020BB" 
-                       value={state.plate}
+                       id="flightDate" 
+                       placeholder="" 
+                       value={state.flightDate}
                        onChange={handleChange}
                 />
                 </div>
                 <div className="form-group text-left">
-                <label htmlFor="exampleInputModel">Modelo del auto: </label>
-                <input type="text" 
+                <label htmlFor="exampleInputTime">Horario de vuelo:</label>
+                <input type="time" 
                        className="form-control" 
-                       id="model" 
-                       placeholder="Hilux" 
-                       value={state.model}
+                       id="time" 
+                       placeholder="" 
+                       value={state.time}
                        onChange={handleChange}
                 />
                 </div>
                 <div className="form-group text-left">
-                <label htmlFor="exampleInputBrand">Marca del auto: </label>
+                <label htmlFor="exampleInputAirline">Aerolinea: </label>
                 <input type="text" 
                        className="form-control" 
-                       id="brand" 
-                       placeholder="Toyota" 
-                       value={state.brand}
-                       onChange={handleChange}
-                />
-                </div>
-                <div className="form-group text-left">
-                <label htmlFor="exampleInputAirport">Aeropuerto asociado: </label>
-                <input type="text" 
-                       className="form-control" 
-                       id="airport"
-                       placeholder="Aeropuerto Ezeiza" 
-                       value={state.airport}
+                       id="airline" 
+                       placeholder="Aerolineas Argentinas" 
+                       value={state.airline}
                        onChange={handleChange}
                 />
                 </div>
@@ -143,4 +131,4 @@ function CreateClaimCar(props) {
     )
 } 
 
-export default withRouter(CreateClaimCar)
+export default withRouter(CreateClaimTicket)

@@ -26,7 +26,7 @@ function Home(props) {
     props.history.push('/login');
     }
     function redirectToCreateClaimCar() {
-      props.history.push('/claims/create/car');
+      props.history.push('/claims/create/ticket');
     }
     return(
         <div className="mt-2">
