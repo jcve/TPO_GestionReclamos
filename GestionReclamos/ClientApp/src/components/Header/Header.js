@@ -6,13 +6,13 @@ function Header(props) {
         if (typeof s !== 'string') return ''
         return s.charAt(0).toUpperCase() + s.slice(1)
     }
-    let title = capitalize(props.location.pathname.substring(1,props.location.pathname.length))
-    if(props.location.pathname === '/') {
+    let title = capitalize(props.location.pathname.substring(1, props.location.pathname.length))
+    if (props.location.pathname === '/') {
         title = 'Gestion de Reclamos - CallCenter'
     }
     function renderLogout() {
-        if(props.location.pathname != '/login' || props.location.pathname != '/register'){
-            return(
+        if (props.location.pathname != '/login' || props.location.pathname != '/register') {
+            return (
                 <div className="ml-auto">
                     <button className="btn btn-danger" onClick={() => handleLogout()}>Desconectarse</button>
                 </div>
@@ -23,7 +23,7 @@ function Header(props) {
         localStorage.removeItem(ACCESS_TOKEN_NAME)
         props.history.push('/login')
     }
-    return(
+    return (
         <nav className="navbar navbar-dark bg-primary">
             <div className="row col-12 d-flex justify-content-center text-white">
                 <span className="h3">{props.title || title}</span>

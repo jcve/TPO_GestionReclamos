@@ -4,16 +4,6 @@ import { ACCESS_TOKEN_NAME } from '../../constants/apiContants';
 
 function Home(props) {
     useEffect(() => {
-        // axios.get('api/claim/car/GetAll', { headers: { 'Authorization': localStorage.getItem(ACCESS_TOKEN_NAME) }})
-        // .then(function (response) {
-        //     if(response.status !== 200){
-        //       redirectToLogin()
-        //     }
-        //     redirectToCreateClaimCar();
-        // })
-        // .catch(function (error) {
-        //   redirectToLogin()
-        // });
         if(localStorage.getItem(ACCESS_TOKEN_NAME) != null){
           redirectToCreateClaimCar();
           console.log("estoy")
@@ -27,6 +17,7 @@ function Home(props) {
     }
     function redirectToCreateClaimCar() {
       props.history.push('/claims/create/ticket');
+      props.updateTitle('Gestion de Reclamos - Crear Reclamo Ticket')
     }
     return(
         <div className="mt-2">

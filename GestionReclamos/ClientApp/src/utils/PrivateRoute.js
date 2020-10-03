@@ -2,13 +2,13 @@ import React from 'react';
 import { Redirect, Route } from "react-router-dom";
 import { ACCESS_TOKEN_NAME } from '../constants/apiContants';
 function PrivateRoute({ children, ...rest }) {
-    return (
-      <Route
-        {...rest}
-        render={({ location }) =>
-          localStorage.getItem(ACCESS_TOKEN_NAME) ? (
-            children
-          ) : (
+  return (
+    <Route
+      {...rest}
+      render={({ location }) =>
+        localStorage.getItem(ACCESS_TOKEN_NAME) ? (
+          children
+        ) : (
             <Redirect
               to={{
                 pathname: "/login",
@@ -16,9 +16,9 @@ function PrivateRoute({ children, ...rest }) {
               }}
             />
           )
-        }
-      />
-    );
-  }
+      }
+    />
+  );
+}
 
 export default PrivateRoute;
