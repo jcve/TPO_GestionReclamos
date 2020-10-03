@@ -23,11 +23,11 @@ namespace GestionReclamos
                            var port = Environment.GetEnvironmentVariable("PORT");
 
                            //para que funcione corriendo como app y no desde iis
-                           //webBuilder.UseStartup<Startup>();
-                           ////.UseUrls("http://*:" + port);
+                           webBuilder.UseStartup<Startup>();
+                           //.UseUrls("http://*:" + port);
 
-                           webBuilder.UseStartup<Startup>()
-                           .UseUrls("http://*:" + port);
+                           //webBuilder.UseStartup<Startup>()
+                           //.UseUrls("http://*:" + port);
                        });
     }
 }

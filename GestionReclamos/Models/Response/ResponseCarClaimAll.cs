@@ -10,8 +10,13 @@ namespace GestionReclamos.Models.Response
     {
         public ResponseCarClaimAll()
         {
-            CarClaims = new List<ReclamoAuto>();
+            CarClaims = new List<ReclamoAutoVM>();
         }
-        public List<ReclamoAuto> CarClaims { get; set; }
+        public List<ReclamoAutoVM> CarClaims { get; set; }
+    }
+    public class ReclamoAutoVM : ReclamoAuto
+    {
+        public string Cliente { get; set; }
+        public string Estado { get; set; }
     }
 }

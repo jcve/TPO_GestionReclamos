@@ -144,9 +144,54 @@ namespace GestionReclamos.Controllers
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAllClaims() // Obtener reclamos
         {
-            var CarClaims = await _context.Set<ReclamoAuto>().ToListAsync();
+            //var CarClaims =
+            var CarClaimsVM = await _context.Set<ReclamoAuto>()
+                .Join(
+                    _context.Set<Estado>(),
+                    reclamoAuto => reclamoAuto.IdEstado,
+                    estado => estado.Id,
+                    (reclamoAuto, estado) => new ReclamoAutoVM
+                    {                        
+                        Estado = estado.Descripcion,
+                        Id = reclamoAuto.Id,
+                        FechaCreacion = reclamoAuto.FechaCreacion,
+                        IdCliente = reclamoAuto.IdCliente,
+                        Descripcion = reclamoAuto.Descripcion,
+                        Patente = reclamoAuto.Patente,
+                        Modelo = reclamoAuto.Modelo,
+                        Marca = reclamoAuto.Marca,
+                        Aeropuerto = reclamoAuto.Aeropuerto,
+                        IdEstado = reclamoAuto.IdEstado,
+                        UltimaModificacion = reclamoAuto.UltimaModificacion
+                    }
+                )
+                .Join
+                (
+                    _context.Set<Usuario>(),
+                    reclamoAuto => reclamoAuto.IdCliente,
+                    usuario => usuario.Id,
+                    (reclamoAuto, usuario) => new ReclamoAutoVM
+                    {
+                        Cliente = usuario.Correo,
+                        Estado = reclamoAuto.Estado,
+                        Id = reclamoAuto.Id,
+                        FechaCreacion = reclamoAuto.FechaCreacion,
+                        IdCliente = reclamoAuto.IdCliente,
+                        Descripcion = reclamoAuto.Descripcion,
+                        Patente = reclamoAuto.Patente,
+                        Modelo = reclamoAuto.Modelo,
+                        Marca = reclamoAuto.Marca,
+                        Aeropuerto = reclamoAuto.Aeropuerto,
+                        IdEstado = reclamoAuto.IdEstado,
+                        UltimaModificacion = reclamoAuto.UltimaModificacion
 
-            return Ok(new ResponseCarClaimAll() {CarClaims =  CarClaims });
+
+                    }
+                )
+                
+                .ToListAsync();
+
+            return Ok(new ResponseCarClaimAll() { CarClaims = CarClaimsVM });
         }
 
         [HttpGet("Get/{id}")]
@@ -156,16 +201,20 @@ namespace GestionReclamos.Controllers
             {
                 var claim = await _context.Set<ReclamoAuto>().FindAsync(id);
                 var res = new ResponseCarClaimAll();
-                if (claim != null) 
+                if (claim != null)
                 {
-                    res.CarClaims.Add(claim);
+                    res.CarClaims.Add(new ReclamoAutoVM()
+                    {
+                        //TODO corregir
+                        Estado = claim.IdEstado.ToString()
+                    });
                 }
                 return Ok(res);
             }
             catch (Exception ex)
             {
                 throw;
-            }            
+            }
         }
     }
 }
