@@ -65,6 +65,11 @@ function CreateClaimCar(props) {
         CreateClaim_Car()    
     }
 
+    const handleSubmitClick2 = (e) => {
+        e.preventDefault();
+        redirectToHome()    
+    }
+
     return(
         <div className="card col-12 col-lg-4 login-card mt-2 hv-center">
             <form>
@@ -81,7 +86,7 @@ function CreateClaimCar(props) {
                 <div className="form-group text-left">
                 <label htmlFor="exampleInputDescription">Descripcion del reclamo: </label>
                 <input type="text" 
-                       className="form-control" 
+                       className="form-control input-lg" 
                        id="description" 
                        placeholder="..." 
                        value={state.Client}
@@ -133,11 +138,18 @@ function CreateClaimCar(props) {
                 <button 
                     type="submit" 
                     className="btn btn-primary"
-                    onClick={handleSubmitClick}
-                >
-                    Crear Reclamo
+                    onClick={handleSubmitClick}>
+                Crear Reclamo
+                </button>
+                <br /><br />
+                <button 
+                    type="submit" 
+                    className="btn btn-info"
+                    onClick={handleSubmitClick2}>
+                    Regresar a Inicio
                 </button>
                 </div>
+                <br />
             </form>            
         </div>
     )

@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import axios from 'axios';
 import './RegistrationForm.css';
-import {ACCESS_TOKEN_NAME} from '../../constants/apiContants';
 import { withRouter } from "react-router-dom";
 
 function RegistrationForm(props) {
@@ -41,10 +40,10 @@ function RegistrationForm(props) {
                         if (response.data.statusCode == 200) {
                             setState(prevState => ({
                                 ...prevState,
-                                'successMessage': 'Login exitoso. Redirigiendo al sistema..'
+                                'successMessage': 'Usuario creado correctamente...'
                             }));
-                            localStorage.setItem(ACCESS_TOKEN_NAME, response.data.token);
-                            redirectToHome();
+                            window.alert(`El usuario con correo ${response.data.mail} fue creado!`)
+                            redirectToLogin();
                         }
                         if (response.data.statusCode != 200)
                             props.showError(response.data.statusCode + " - " + response.data.description);
@@ -61,11 +60,11 @@ function RegistrationForm(props) {
         
     }
     const redirectToHome = () => {
-        props.updateTitle('Inicio')
+        props.updateTitle('Gestion de Reclamos - Inicio')
         props.history.push('/home');
     }
     const redirectToLogin = () => {
-        props.updateTitle('Login')
+        props.updateTitle('Gestion de Reclamos - Login')
         props.history.push('/login'); 
     }
     const handleSubmitClick = (e) => {

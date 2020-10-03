@@ -47,12 +47,12 @@ function LoginForm(props) {
             });
     }
     const redirectToHome = () => {
-        props.updateTitle('Inicio')
+        props.updateTitle('Gestion de Reclamos - Inicio')
         props.history.push('/home');
     }
     const redirectToRegister = () => {
         props.history.push('/register'); 
-        props.updateTitle('Registro');
+        props.updateTitle('Gestion de Reclamos - Registro');
     }
     return(
         <div className="card col-12 col-lg-4 login-card mt-2 hv-center">

@@ -8,7 +8,7 @@ function Header(props) {
     }
     let title = capitalize(props.location.pathname.substring(1,props.location.pathname.length))
     if(props.location.pathname === '/') {
-        title = 'Gestion de Reclamos'
+        title = 'Gestion de Reclamos - CallCenter'
     }
     function renderLogout() {
         if(props.location.pathname != '/login' || props.location.pathname != '/register'){
