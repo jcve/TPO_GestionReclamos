@@ -21,10 +21,21 @@ export default function FormDialogTicket(props) {
   const [open, setOpen] = useState(false);
   const [estados, setEstados] = useState([]);
   const [estado, setEstado] = useState('');
+  const [id, setId] = useState('')
+  const [client, setClient] = useState('')
+  const [description, setDescription] = useState('')
+  const [flightDate, setFlightDate] = useState('')
+  const [airline, setAirline] = useState('')
 
   const handleClickOpen = () => {   
     if(estados != undefined){
         setEstados(props.estados)
+        setEstado(props.claim.estado)
+        setId(props.claim.id)
+        setClient(props.claim.cliente)
+        setDescription(props.claim.descripcion)
+        setFlightDate(props.claim.fechaCreacion)
+        setAirline(props.claim.aerolinea)
     }    
     setOpen(true);
   };
@@ -41,11 +52,11 @@ export default function FormDialogTicket(props) {
   const changeState = (nuevoEstado) => {
     // console.log(`algo2 -------- ${event}`)
     const payload = {
-        "Id": props.claim.id,
-        "Client":props.claim.cliente,
-        "Description":props.claim.descripcion,
-        "FlightDate":props.claim.fechaCreacion,
-        "Airline":props.claim.aerolinea,
+        "Id": id,
+        "Client":client,
+        "Description":description,
+        "FlightDate":flightDate,
+        "Airline":airline,
         "State": nuevoEstado
     }
 
@@ -85,21 +96,62 @@ export default function FormDialogTicket(props) {
           <DialogContentText>
             {props.content}
           </DialogContentText>
-            <FormControl style={{width:'200px'}}>
+            <FormControl style={{width:'400px'}}>
                 <InputLabel>Estado posibles</InputLabel>
-                <Select
-                labelId="demo-mutiple-name-label"
-                id="demo-mutiple-name"
-                value= {props.estado}
-                onChange={handleChange}                
-                >
-                {estados.map((estado) => (
-                    <MenuItem key={estado} value={estado}>
-                    {estado}
-                    </MenuItem>
-                ))}
-                </Select>
-            </FormControl>
+                  <Select
+                  labelId="demo-mutiple-name-label"
+                  id="demo-mutiple-name"
+                  value= {estado}
+                  onChange={handleChange}                
+                  >
+                  {estados.map((estado) => (
+                      <MenuItem key={estado} value={estado}>
+                      {estado}
+                      </MenuItem>
+                  ))}
+                  </Select>
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="client"
+                    label="Correo"
+                    type="email"
+                    fullWidth
+                    value={client}
+                    onChange={(e)=> setClient(e.target.value)}
+                  />
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="description"
+                    label="Descripcion"
+                    type="text"
+                    fullWidth
+                    value={description}
+                    onChange={(e)=> setDescription(e.target.value)}
+                  />
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="airline"
+                    label="Aerolinea"
+                    type="text"
+                    fullWidth
+                    value={airline}
+                    onChange={(e)=> setAirline(e.target.value)}
+                  />
+
+                <TextField
+                    id="datetime-local"
+                    label="Fecha vuelo"
+                    type="datetime-local"
+                    defaultValue={flightDate}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    onChange={(e)=> setFlightDate(e.target.value)}
+                  />
+            </FormControl>            
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">

@@ -87,20 +87,52 @@ namespace GestionReclamos.Controllers
             //modificar reclamo
             if (claim != null)
             {
-                claim.FechaVuelo = reclamo.FlightDate;
-                claim.Aerolinea = reclamo.Airline;
-                claim.Descripcion = reclamo.Description;
-                claim.IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
-                claim.UltimaModificacion = DateTime.Now;
-
-                dbSetTicketClaims.Update(claim);
-
-                var cantRegistrosInsertados = await _context.SaveChangesAsync<ReclamoPasaje>();
-
-                if (cantRegistrosInsertados.Equals(1))
+                var usuario = await _context.Set<Usuario>().Where(u => u.Correo == reclamo.Client).FirstOrDefaultAsync();
+                if (usuario != null)
                 {
+                    claim.FechaVuelo = reclamo.FlightDate;
+                    claim.IdCliente = usuario.Id;
+                    claim.Aerolinea = reclamo.Airline;
+                    claim.Descripcion = reclamo.Description;
+                    claim.IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
+                    claim.UltimaModificacion = DateTime.Now;
 
-                    return Ok(new ResponseClaimModify() { IdClaim = reclamo.Id, Message = "OK" });
+                    dbSetTicketClaims.Update(claim);
+
+                    var cantRegistrosInsertados = await _context.SaveChangesAsync<ReclamoPasaje>();
+
+                    if (cantRegistrosInsertados.Equals(1))
+                    {
+
+                        return Ok(new ResponseClaimModify() { IdClaim = reclamo.Id, Message = "OK" });
+                    }
+                }
+                //crear el usuarios y dsp agregar
+                else 
+                {
+                    var nuevoUsr = new Usuario { Correo = reclamo.Client };
+                    _context.Set<Usuario>().Add(nuevoUsr);
+                    await _context.SaveChangesAsync<Usuario>();
+                    var idCliente = nuevoUsr.Id;
+
+
+                    claim.FechaVuelo = reclamo.FlightDate;
+                    claim.IdCliente = idCliente;
+                    claim.Aerolinea = reclamo.Airline;
+                    claim.Descripcion = reclamo.Description;
+                    claim.IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
+                    claim.UltimaModificacion = DateTime.Now;
+
+                    dbSetTicketClaims.Update(claim);
+
+                    var cantRegistrosInsertados = await _context.SaveChangesAsync<ReclamoPasaje>();
+
+                    if (cantRegistrosInsertados.Equals(1))
+                    {
+
+                        return Ok(new ResponseClaimModify() { IdClaim = reclamo.Id, Message = "OK" });
+                    }
+
                 }
             }
 

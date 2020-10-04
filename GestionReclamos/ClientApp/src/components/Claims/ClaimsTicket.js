@@ -101,14 +101,14 @@ function ClaimsTicket(props) {
             <TableRow key={row.value.id}>
                 <TableCell>{row.value.id}</TableCell>
                 <TableCell>{row.value.fechaCreacion}</TableCell>
-                <TableCell>{row.value.Cliente}</TableCell>
+                <TableCell>{row.value.cliente}</TableCell>
                 <TableCell>{row.value.descripcion}</TableCell>
                 <TableCell>{row.value.fechaVuelo}</TableCell>
                 <TableCell>{row.value.aerolinea}</TableCell>
                 <TableCell>{row.value.ultimaModificacion}</TableCell>
                 <TableCell>{row.value.estado}</TableCell>
                 <TableCell>
-                    <FormDialog claim={row.value} estados={state.estados} title ='Modificar estado' buttontext='Modificar' content ='A que estado desea cambiar el reclamo?'/>
+                    <FormDialog claim={row.value} estados={state.estados} title={`Modificar reclamo ${row.value.id}`} buttontext='Modificar' content ='Modifique los campos necesarios'/>
                     {/* <Button style={{backgroundColor: 'black', color: 'white'}} 
                         onClick={(e) => handleClick(e.target.value = row.value)}
                     >Eliminar</Button> */}

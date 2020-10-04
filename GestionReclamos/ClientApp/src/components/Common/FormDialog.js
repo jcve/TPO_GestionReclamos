@@ -17,14 +17,32 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 
 export default function FormDialog(props) {
-  console.log(`adentro del fromdialog -------- ${props.title}`)
   const [open, setOpen] = useState(false);
   const [estados, setEstados] = useState([]);
   const [estado, setEstado] = useState('');
 
+  const [id, setId] = useState('')
+  const [client, setClient] = useState('')
+  const [description, setDescription] = useState('')
+  
+  const [plate,setPlate] = useState('')
+  const [model,setModel] = useState('')
+  const [brand,setBrand] = useState('')
+  const [airport,setAirport] = useState('')
+
+
   const handleClickOpen = () => {   
     if(estados != undefined){
         setEstados(props.estados)
+        setEstado(props.claim.estado)
+        
+        setId(props.claim.id)
+        setClient(props.claim.cliente)
+        setDescription(props.claim.descripcion)
+        setPlate(props.claim.patente)
+        setModel(props.claim.modelo)
+        setBrand(props.claim.marca)
+        setAirport(props.claim.aeropuerto)
     }    
     setOpen(true);
   };
@@ -41,13 +59,13 @@ export default function FormDialog(props) {
   const changeState = (nuevoEstado) => {
     // console.log(`algo2 -------- ${event}`)
     const payload = {
-        "Id": props.claim.id,
-        "Client":props.claim.cliente,
-        "Description":props.claim.descripcion,
-        "Plate":props.claim.patente,
-        "Model":props.claim.modelo,
-        "Brand":props.claim.marca,
-        "Airport":props.claim.aeropuerto,
+        "Id": id,
+        "Client":client,
+        "Description":description,
+        "Plate":plate,
+        "Model":model,
+        "Brand":brand,
+        "Airport":airport,
         "State": nuevoEstado
     }
 
@@ -87,12 +105,12 @@ export default function FormDialog(props) {
           <DialogContentText>
             {props.content}
           </DialogContentText>
-            <FormControl style={{width:'200px'}}>
-                <InputLabel>Estado posibles</InputLabel>
+            <FormControl style={{width:'400px'}}>
+                <InputLabel>Estado</InputLabel>
                 <Select
                 labelId="demo-mutiple-name-label"
                 id="demo-mutiple-name"
-                value= {props.estado}
+                value= {estado}
                 onChange={handleChange}                
                 >
                 {estados.map((estado) => (
@@ -101,6 +119,66 @@ export default function FormDialog(props) {
                     </MenuItem>
                 ))}
                 </Select>
+                <TextField
+                    autoFocus
+                    margin="dense"
+                    id="client"
+                    label="Correo"
+                    type="email"
+                    fullWidth
+                    value={client}
+                    onChange={(e)=> setClient(e.target.value)}
+                />
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="description"
+                  label="Descripcion"
+                  type="text"
+                  fullWidth
+                  value={description}
+                  onChange={(e)=> setDescription(e.target.value)}
+                />
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="plate"
+                  label="Patente"
+                  type="text"
+                  fullWidth
+                  value={plate}
+                  onChange={(e)=> setPlate(e.target.value)}
+                />
+                 <TextField
+                  autoFocus
+                  margin="dense"
+                  id="model"
+                  label="Modelo"
+                  type="text"
+                  fullWidth
+                  value={model}
+                  onChange={(e)=> setModel(e.target.value)}
+                />
+                 <TextField
+                  autoFocus
+                  margin="dense"
+                  id="brand"
+                  label="Marca"
+                  type="text"
+                  fullWidth
+                  value={brand}
+                  onChange={(e)=> setBrand(e.target.value)}
+                />
+                 <TextField
+                  autoFocus
+                  margin="dense"
+                  id="airport"
+                  label="Aeropuerto"
+                  type="text"
+                  fullWidth
+                  value={airport}
+                  onChange={(e)=> setAirport(e.target.value)}
+                />
             </FormControl>
         </DialogContent>
         <DialogActions>

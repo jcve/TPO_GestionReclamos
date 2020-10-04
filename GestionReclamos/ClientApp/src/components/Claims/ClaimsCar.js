@@ -110,7 +110,7 @@ function ClaimsCar(props) {
                 <TableCell>{row.value.ultimaModificacion}</TableCell>
                 <TableCell>{row.value.estado}</TableCell>
                 <TableCell>
-                    <FormDialog claim={row.value} estados={state.estados} title ='Modificar estado' buttontext='Modificar' content ='A que estado desea cambiar el reclamo?'/>
+                    <FormDialog claim={row.value} estados={state.estados} title={`Modificar reclamo ${row.value.id}`} buttontext='Modificar' content ='Modifique los campos necesarios'/>
                     {/* <Button style={{backgroundColor: 'black', color: 'white'}} 
                         onClick={(e) => handleClick(e.target.value = row.value)}
                     >Eliminar</Button> */}
