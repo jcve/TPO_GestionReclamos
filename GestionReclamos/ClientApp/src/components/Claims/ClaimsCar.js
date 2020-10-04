@@ -26,13 +26,13 @@ function ClaimsCar(props) {
         table: {
             minWidth: 650,
         },
-        
+
     });
 
     const classes = useStyles();
 
-    useEffect(() => {  
-        GetStates()      
+    useEffect(() => {
+        GetStates()
         GetClaimsCar()
     }, [])
 
@@ -49,6 +49,16 @@ function ClaimsCar(props) {
         }))
     }
 
+    const redirectToHome = () => {
+        props.updateTitle('Gestion de Reclamos - Inicio')
+        props.history.push('/home');
+    }
+
+    const handleSubmitClick2 = (e) => {
+        e.preventDefault();
+        redirectToHome()
+    }
+
     const GetClaimsCar = () => {
         axios.get('/api/Claim/Car/GetAll', { headers: { 'Authorization': localStorage.getItem(ACCESS_TOKEN_NAME) } })
             .then(function (response) {
@@ -58,7 +68,7 @@ function ClaimsCar(props) {
                         setState((prevState => ({
                             ...prevState,
                             claims: response.data.carClaims
-                         })))
+                        })))
                         // window.alert(`Reclamo creado con el identificador ${response.data.idClaim}`);
                     }
                     if (response.data.carClaims.length == 0)
@@ -94,7 +104,7 @@ function ClaimsCar(props) {
                 console.log(error);
             });
     }
-    
+
 
     function ClaimItem(row) {
         return (
@@ -110,7 +120,7 @@ function ClaimsCar(props) {
                 <TableCell>{row.value.ultimaModificacion}</TableCell>
                 <TableCell>{row.value.estado}</TableCell>
                 <TableCell>
-                    <FormDialog claim={row.value} estados={state.estados} title={`Modificar reclamo ${row.value.id}`} buttontext='Modificar' content ='Modifique los campos necesarios'/>
+                    <FormDialog claim={row.value} estados={state.estados} title={`Reclamo con identificador: ${row.value.id}`} buttontext='Modificar' content='Modifique los campos necesarios' />
                     {/* <Button style={{backgroundColor: 'black', color: 'white'}} 
                         onClick={(e) => handleClick(e.target.value = row.value)}
                     >Eliminar</Button> */}
@@ -135,7 +145,7 @@ function ClaimsCar(props) {
         else {
             return (
                 <TableBody>
-                    { }
+                    {}
                 </TableBody>
             );
         }
@@ -154,26 +164,40 @@ function ClaimsCar(props) {
 
     return (
         <div>
+            <br />
+            <button
+                type="submit"
+                className="btn btn-info"
+                onClick={handleSubmitClick2}>
+                Regresar a Inicio
+                </button>
+            <button
+                type="submit"
+                className="btn btn-primary ml-1"
+                onClick={GetClaimsCar}>
+                Recargar esta Lista
+                </button>
+            <br />
             <TableContainer component={Paper}>
                 <Table className={classes.table} aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell align="right">id</TableCell>
-                            <TableCell align="right">aeropuerto</TableCell>
-                            <TableCell align="right">descripcion</TableCell>
-                            <TableCell align="right">fechaCreacion</TableCell>
-                            <TableCell align="right">Cliente</TableCell>
-                            <TableCell align="right">marca</TableCell>
-                            <TableCell align="right">modelo</TableCell>
-                            <TableCell align="right">patente</TableCell>
-                            <TableCell align="right">ultimaModificacion</TableCell>
+                            <TableCell align="right">ID</TableCell>
+                            <TableCell align="right">Aeropuerto</TableCell>
+                            <TableCell align="right">Descripción</TableCell>
+                            <TableCell align="right">Fecha creación</TableCell>
+                            <TableCell align="right">Correo asociado</TableCell>
+                            <TableCell align="right">Marca</TableCell>
+                            <TableCell align="right">Modelo</TableCell>
+                            <TableCell align="right">Patente</TableCell>
+                            <TableCell align="right">Ultima modificación</TableCell>
                             <TableCell align="right">Estado</TableCell>
-                            <TableCell align="right">acciones posibles</TableCell>
+                            <TableCell align="right">Acciones</TableCell>
                         </TableRow>
                     </TableHead>
                     <ClaimList />
                 </Table>
-            </TableContainer>            
+            </TableContainer>
         </div>
 
 

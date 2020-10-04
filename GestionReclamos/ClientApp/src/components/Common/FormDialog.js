@@ -74,7 +74,7 @@ export default function FormDialog(props) {
             if (response.status == 200) {
                 console.log(response.data)
                 if (response.data.message == "OK") {
-                    window.alert(`Reclamo modificado ${response.data.idClaim}`);
+                    window.alert(`El reclamo con identificador: ${response.data.idClaim} fue modificado correctamente!`);
                 }
                 if (response.data.message != "OK")
                     props.showError("Ocurrio un error general.");

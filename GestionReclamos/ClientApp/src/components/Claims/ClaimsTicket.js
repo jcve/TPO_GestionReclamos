@@ -26,13 +26,13 @@ function ClaimsTicket(props) {
         table: {
             minWidth: 650,
         },
-        
+
     });
 
     const classes = useStyles();
 
-    useEffect(() => {  
-        GetStates()      
+    useEffect(() => {
+        GetStates()
         GetClaimsTicket()
     }, [])
 
@@ -49,6 +49,16 @@ function ClaimsTicket(props) {
         }))
     }
 
+    const redirectToHome = () => {
+        props.updateTitle('Gestion de Reclamos - Inicio')
+        props.history.push('/home');
+    }
+
+    const handleSubmitClick2 = (e) => {
+        e.preventDefault();
+        redirectToHome()
+    }
+
     const GetClaimsTicket = () => {
         axios.get('/api/Claim/Ticket/GetAll', { headers: { 'Authorization': localStorage.getItem(ACCESS_TOKEN_NAME) } })
             .then(function (response) {
@@ -58,7 +68,7 @@ function ClaimsTicket(props) {
                         setState((prevState => ({
                             ...prevState,
                             claims: response.data.ticketClaims
-                         })))
+                        })))
                         // window.alert(`Reclamo creado con el identificador ${response.data.idClaim}`);
                     }
                     if (response.data.ticketClaims.length == 0)
@@ -94,7 +104,7 @@ function ClaimsTicket(props) {
                 console.log(error);
             });
     }
-    
+
 
     function ClaimItem(row) {
         return (
@@ -108,7 +118,7 @@ function ClaimsTicket(props) {
                 <TableCell>{row.value.ultimaModificacion}</TableCell>
                 <TableCell>{row.value.estado}</TableCell>
                 <TableCell>
-                    <FormDialog claim={row.value} estados={state.estados} title={`Modificar reclamo ${row.value.id}`} buttontext='Modificar' content ='Modifique los campos necesarios'/>
+                    <FormDialog claim={row.value} estados={state.estados} title={`Reclamo con identificador: ${row.value.id}`} buttontext='Modificar' content='Modifique los campos necesarios' />
                     {/* <Button style={{backgroundColor: 'black', color: 'white'}} 
                         onClick={(e) => handleClick(e.target.value = row.value)}
                     >Eliminar</Button> */}
@@ -133,7 +143,7 @@ function ClaimsTicket(props) {
         else {
             return (
                 <TableBody>
-                    { }
+                    {}
                 </TableBody>
             );
         }
@@ -152,24 +162,38 @@ function ClaimsTicket(props) {
 
     return (
         <div>
+            <br />
+            <button
+                type="submit"
+                className="btn btn-info"
+                onClick={handleSubmitClick2}>
+                Regresar a Inicio
+                </button>
+                <button
+                type="submit"
+                className="btn btn-primary ml-1"
+                onClick={GetClaimsTicket}>
+                Recargar esta Lista
+                </button>
+            <br />
             <TableContainer component={Paper}>
                 <Table className={classes.table} aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell align="right">id</TableCell>
-                            <TableCell align="right">fechaCreacion</TableCell>
-                            <TableCell align="right">Cliente</TableCell>
-                            <TableCell align="right">descripcion</TableCell>
-                            <TableCell align="right">fechaVuelo</TableCell>
-                            <TableCell align="right">aerolinea</TableCell>
-                            <TableCell align="right">ultimaModificacion</TableCell>
+                            <TableCell align="right">ID</TableCell>
+                            <TableCell align="right">Fecha Creación</TableCell>
+                            <TableCell align="right">Correo asociado</TableCell>
+                            <TableCell align="right">Descripción</TableCell>
+                            <TableCell align="right">Fecha Vuelo</TableCell>
+                            <TableCell align="right">Aerolinea</TableCell>
+                            <TableCell align="right">Ultima modificación</TableCell>
                             <TableCell align="right">Estado</TableCell>
-                            <TableCell align="right">acciones posibles</TableCell>
+                            <TableCell align="right">Acciones</TableCell>
                         </TableRow>
                     </TableHead>
                     <ClaimList />
                 </Table>
-            </TableContainer>            
+            </TableContainer>
         </div>
 
 
