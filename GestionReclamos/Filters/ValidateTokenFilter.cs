@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace GestionReclamos.Filters
 {
@@ -50,8 +51,8 @@ namespace GestionReclamos.Filters
 
             context.HttpContext.Response.ContentType = "application/json";
             context.HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
-
-            await context.HttpContext.Response.WriteAsync("Token no valido, no estas autorizado.");
+            var json = JsonConvert.SerializeObject("Token no valido, no estas autorizado.");
+            await context.HttpContext.Response.WriteAsync(json);
         }
 
         private async Task<bool> ValidarToken(string token) {

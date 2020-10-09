@@ -24,6 +24,7 @@ namespace GestionReclamos.Controllers
         }
 
         [ProducesResponseType(typeof(List<string>), 200)]
+        [ProducesResponseType(typeof(string), 401)]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAllClaims() // Obtener estados reclamos
         {

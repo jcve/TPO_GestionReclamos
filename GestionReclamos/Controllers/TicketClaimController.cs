@@ -26,6 +26,7 @@ namespace GestionReclamos.Controllers
         }
 
         [ProducesResponseType(typeof(ResponseClaimCreated), 200)]
+        [ProducesResponseType(typeof(string), 401)]
         [HttpPost("New")]
         public async Task<IActionResult> NewClaim([FromBody] RequestTicketClaim reclamo) // Nuevo reclamo
         {
@@ -80,6 +81,7 @@ namespace GestionReclamos.Controllers
         }
 
         [ProducesResponseType(typeof(ResponseClaimModify), 200)]
+        [ProducesResponseType(typeof(string), 401)]
         [HttpPost("Modify")]
         public async Task<IActionResult> ModifyClaim([FromBody] RequestModifyTicketClaim reclamo) // Modificar reclamo
         {
@@ -148,6 +150,7 @@ namespace GestionReclamos.Controllers
         }
 
         [ProducesResponseType(typeof(ResponseTicketClaimAll), 200)]
+        [ProducesResponseType(typeof(string), 401)]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAllClaims() // Obtener reclamos
         {
@@ -193,6 +196,7 @@ namespace GestionReclamos.Controllers
         }
 
         [ProducesResponseType(typeof(ResponseTicketClaimAll), 200)]
+        [ProducesResponseType(typeof(string), 401)]
         [HttpGet("Get/{id}")]
         public async Task<IActionResult> GetClaim(int id) // Obtener reclamo - INTERNO/EXTERNO
         {

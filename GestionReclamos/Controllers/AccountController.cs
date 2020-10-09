@@ -64,7 +64,7 @@ namespace GestionReclamos.Controllers
             }
         }
 
-        [ProducesResponseType(typeof(ResponseLogin), 200)]
+        [ProducesResponseType(typeof(ResponseNewUser), 200)]
         [HttpPost("Signup")]
         public async Task<IActionResult> Signup([FromBody] RequestNewUser newUser) // Registrarse
         {
