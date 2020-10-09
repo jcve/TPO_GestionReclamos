@@ -23,7 +23,7 @@ function CreateClaimCar(props) {
     }
 
     const redirectToHome = () => {
-        props.updateTitle('Inicio')
+        props.updateTitle('Gestion de Reclamos - Inicio')
         props.history.push('/home');
     }
 

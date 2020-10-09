@@ -60,11 +60,11 @@ function RegistrationForm(props) {
 
     }
     const redirectToHome = () => {
-        props.updateTitle('Gestion de Reclamos - Inicio')
+        props.updateTitle('Inicio')
         props.history.push('/home');
     }
     const redirectToLogin = () => {
-        props.updateTitle('Gestion de Reclamos - Login')
+        props.updateTitle('Login')
         props.history.push('/login');
     }
     const handleSubmitClick = (e) => {

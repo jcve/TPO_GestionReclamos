@@ -52,7 +52,7 @@ function LoginForm(props) {
     }
     const redirectToRegister = () => {
         props.history.push('/register');
-        props.updateTitle('Gestion de Reclamos - Registro');
+        props.updateTitle('Registro');
     }
     return (
         <div className="card col-12 col-lg-4 login-card mt-2 hv-center">
@@ -80,20 +80,20 @@ function LoginForm(props) {
                 </div>
                 <div className="form-check">
                 </div>
-                <small id="emailHelp" className="form-text text-muted">Nunca comparta sus datos con nadie.</small><br />
+                <small id="help" className="form-text text-muted">Nunca comparta sus datos con nadie.</small><br />
                 <button
                     type="submit"
                     className="btn btn-primary"
                     onClick={handleSubmitClick}
                 >Ingresar</button>
             </form>
-            <div className="alert alert-success mt-2" style={{ display: state.successMessage ? 'block' : 'none' }} role="alert">
-                {state.successMessage}
-            </div>
             <div className="registerMessage">
-                <span>¿No tiene una cuenta? </span><br />
+                <span>¿No tiene una cuenta como operador? </span><br />
                 <span className="loginText" onClick={() => redirectToRegister()}>Registrate aqui!</span>
             </div>
+            {/* <div className="alert alert-success mt-2" style={{ display: state.successMessage ? 'block' : 'none' }} role="alert">
+                {state.successMessage}
+            </div> */}
         </div>
     )
 }

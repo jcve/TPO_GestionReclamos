@@ -25,36 +25,17 @@ namespace GestionReclamos.Controllers
             _context = context;
         }
 
+        [ProducesResponseType(typeof(ResponseClaimCreated), 200)]
+        [ProducesResponseType(typeof(string), 401)]
         [HttpPost("New")]
         public async Task<IActionResult> NewClaim([FromBody] RequestCarClaim reclamo) // Nuevo reclamo
         {
             try
             {
-                ////Carga de estados principal
-                //var dbSet = _context.Set<Estado>();
-                //dbSet.AddRange(new List<Estado>
-                //{   new Estado
-                //    {
-                //        Descripcion = "Nuevo"
-                //    },
-                //    new Estado
-                //    {
-                //        Descripcion = "En progreso"
-                //    },
-                //    new Estado
-                //    {
-                //        Descripcion = "Resuelto"
-                //    },
-                //    new Estado
-                //    {
-                //        Descripcion = "Cerrado"
-                //    }
-                //});
-                //var h = _context.SaveChanges<Estado>();
-
                 //verificar que exista el cliente
                 var usr = _context.Set<Usuario>().Where(u => u.Correo == reclamo.Client).FirstOrDefault();
                 int idCliente = 0;
+
                 //si no existe, crearlo
                 if (usr == null)
                 {
@@ -103,6 +84,8 @@ namespace GestionReclamos.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(ResponseClaimModify), 200)]
+        [ProducesResponseType(typeof(string), 401)]
         [HttpPost("Modify")]
         public async Task<IActionResult> ModifyClaim([FromBody] RequestModifyCarClaim reclamo) // Modificar reclamo
         {
@@ -141,6 +124,8 @@ namespace GestionReclamos.Controllers
             return null;
         }
 
+        [ProducesResponseType(typeof(ResponseCarClaimAll), 200)]
+        [ProducesResponseType(typeof(string), 401)]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAllClaims() // Obtener reclamos
         {
@@ -194,6 +179,8 @@ namespace GestionReclamos.Controllers
             return Ok(new ResponseCarClaimAll() { CarClaims = CarClaimsVM });
         }
 
+        [ProducesResponseType(typeof(ResponseCarClaimAll), 200)]
+        [ProducesResponseType(typeof(string), 401)]
         [HttpGet("Get/{id}")]
         public async Task<IActionResult> GetClaim(int id) // Obtener reclamo - INTERNO/EXTERNO
         {

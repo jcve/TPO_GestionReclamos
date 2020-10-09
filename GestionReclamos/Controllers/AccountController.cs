@@ -23,6 +23,7 @@ namespace GestionReclamos.Controllers
         {
         }
 
+        [ProducesResponseType(typeof(ResponseLogin), 200)]
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] RequestLogin login) // Login
         {
@@ -63,6 +64,7 @@ namespace GestionReclamos.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(ResponseNewUser), 200)]
         [HttpPost("Signup")]
         public async Task<IActionResult> Signup([FromBody] RequestNewUser newUser) // Registrarse
         {
@@ -104,8 +106,6 @@ namespace GestionReclamos.Controllers
                     responseNewLogin.Description = "Usuario creado correctamente";
                     responseNewLogin.Mail = userCreated.Mail;
                     responseNewLogin.Identity = userCreated.Identity;
-
-                    // TODO: Guardar usuario en nuestra base de datos
                 }
                 else if ((int)response.StatusCode == 500)
                 {

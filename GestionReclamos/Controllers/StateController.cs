@@ -23,10 +23,11 @@ namespace GestionReclamos.Controllers
             _context = context;
         }
 
+        [ProducesResponseType(typeof(List<string>), 200)]
+        [ProducesResponseType(typeof(string), 401)]
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAllClaims() // Obtener reclamos
+        public async Task<IActionResult> GetAllClaims() // Obtener estados reclamos
         {
-            //var CarClaims =
             var StatesVM = await _context.Set<Estado>().Select(e=> e.Descripcion).ToListAsync();
 
             return Ok(StatesVM);
