@@ -22,8 +22,8 @@ function CreateClaimTicket(props) {
     }
 
     const redirectToHome = () => {
-        props.updateTitle('Gestion de Reclamos - Inicio')
-        props.history.push('/home');
+        props.updateTitle('Gestion de Reclamos - Reclamos de Pasajes')
+        props.history.push('/claims/ticket');
     }
 
     const CreateClaim_Ticket = () => {

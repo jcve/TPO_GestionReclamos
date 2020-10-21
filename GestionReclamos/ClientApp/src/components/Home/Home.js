@@ -3,22 +3,9 @@ import { withRouter } from 'react-router-dom';
 import { ACCESS_TOKEN_NAME } from '../../constants/apiContants';
 
 function Home(props) {
-    // useEffect(() => {
-    //     if(localStorage.getItem(ACCESS_TOKEN_NAME) != null){
-    //       redirectToCreateClaimCar();
-    //       console.log("estoy")
-    //     }
-    //     else{
-    //       redirectToLogin()
-    //     }
-    //   })
     function redirectToLogin() {
         props.history.push('/login');
         props.updateTitle('Login')
-    }
-    function redirectToCreateClaimCar() {
-        props.history.push('/claims/create/car');
-        props.updateTitle('Gestion de Reclamos - Crear Reclamo Auto')
     }
     function redirectToClaimsCar() {
         props.history.push('/claims/car');
@@ -29,9 +16,8 @@ function Home(props) {
         props.updateTitle('Gestion de Reclamos - Reclamos de Pasajes')
     }
 
-    function redirectToCreateClaimTicket() {
-        props.history.push('/claims/create/ticket');
-        props.updateTitle('Gestion de Reclamos - Crear Reclamo Ticket')
+    function redirectToSwagger() {
+        window.location.href = '/swagger/index.html';
     }
     return (
         <div>
@@ -47,37 +33,8 @@ function Home(props) {
                 <div class="col-sm-6">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Modulo creación de reclamos</h5>
-                            <p class="card-text">Creación de reclamos para autos</p>
-                            <button
-                                type="submit"
-                                className="btn btn-primary btn-lg btn-block"
-                                onClick={redirectToCreateClaimCar}
-                            >Crear Reclamo Auto</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Modulo creación de reclamos</h5>
-                            <p class="card-text">Creación de reclamos para pasajes</p>
-                            <button
-                                type="submit"
-                                className="btn btn-primary btn-lg btn-block"
-                                onClick={redirectToCreateClaimTicket}
-                            >Crear Reclamo Pasaje</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <br />
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="card">
-                        <div class="card-body">
-                        <h5 class="card-title">Modulo modificación de reclamos</h5>
-                        <p class="card-text">Modificación de reclamos para autos</p>
+                            <h5 class="card-title">Reclamos Autos</h5>
+                            <p class="card-text">Creación y modificación de reclamos para autos</p>
                             <button
                                 type="submit"
                                 className="btn btn-primary btn-lg btn-block"
@@ -89,8 +46,8 @@ function Home(props) {
                 <div class="col-sm-6">
                     <div class="card">
                         <div class="card-body">
-                        <h5 class="card-title">Modulo modificación de reclamos</h5>
-                        <p class="card-text">Modificación de reclamos para pasajes</p>
+                            <h5 class="card-title">Reclamos Pasajes</h5>
+                            <p class="card-text">Creación y modificación de reclamos para pasajes</p>
                             <button
                                 type="submit"
                                 className="btn btn-primary btn-lg btn-block"
@@ -100,6 +57,18 @@ function Home(props) {
                     </div>
                 </div>
             </div>
+            {/* <br /><br />
+            <div class="card align-middle">
+                <div class="card-body">
+                    <h5 class="card-title">Developers</h5>
+                    <p class="card-text">Acceso a las APIs del Sistema de Reclamos</p>
+                    <button
+                        type="submit"
+                        className="btn btn-primary"
+                        onClick={redirectToSwagger}
+                    >Ver Swagger</button>
+                </div>
+            </div> */}
         </div>
     )
 }

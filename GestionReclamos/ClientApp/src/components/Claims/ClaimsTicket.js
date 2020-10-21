@@ -59,6 +59,11 @@ function ClaimsTicket(props) {
         redirectToHome()
     }
 
+    function redirectToCreateClaimTicket() {
+        props.history.push('/claims/ticket/create');
+        props.updateTitle('Gestion de Reclamos - Crear Reclamo Ticket')
+    }
+
     const GetClaimsTicket = () => {
         axios.get('/api/Claim/Ticket/GetAll', { headers: { 'Authorization': localStorage.getItem(ACCESS_TOKEN_NAME) } })
             .then(function (response) {
@@ -165,11 +170,17 @@ function ClaimsTicket(props) {
             <br />
             <button
                 type="submit"
+                className="btn btn-primary float-right"
+                onClick={redirectToCreateClaimTicket}
+            >Crear Reclamo Pasaje</button>
+            <br />
+            <button
+                type="submit"
                 className="btn btn-info"
                 onClick={handleSubmitClick2}>
                 Regresar a Inicio
                 </button>
-                <button
+            <button
                 type="submit"
                 className="btn btn-primary ml-1"
                 onClick={GetClaimsTicket}>

@@ -38,10 +38,10 @@ function App() {
                         <PrivateRoute path="/home">
                             <Home showError={updateErrorMessage} updateTitle={updateTitle} />
                         </PrivateRoute>
-                        <PrivateRoute path="/claims/create/car">
+                        <PrivateRoute path="/claims/car/create">
                             <CreateClaimCar showError={updateErrorMessage} updateTitle={updateTitle} />
                         </PrivateRoute>
-                        <PrivateRoute path="/claims/create/ticket">
+                        <PrivateRoute path="/claims/ticket/create">
                             <CreateClaimTicket showError={updateErrorMessage} updateTitle={updateTitle} />
                         </PrivateRoute>
                         <PrivateRoute path="/claims/car">

@@ -23,8 +23,8 @@ function CreateClaimCar(props) {
     }
 
     const redirectToHome = () => {
-        props.updateTitle('Gestion de Reclamos - Inicio')
-        props.history.push('/home');
+        props.updateTitle('Gestion de Reclamos - Reclamos de Autos')
+        props.history.push('/claims/car');
     }
 
     const CreateClaim_Car = () => {
@@ -146,7 +146,7 @@ function CreateClaimCar(props) {
                         type="submit"
                         className="btn btn-info"
                         onClick={handleSubmitClick2}>
-                        Regresar a Inicio
+                        Regresar
                 </button>
                 </div>
                 <br />

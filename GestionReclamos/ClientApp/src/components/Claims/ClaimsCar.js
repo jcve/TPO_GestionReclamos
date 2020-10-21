@@ -59,6 +59,11 @@ function ClaimsCar(props) {
         redirectToHome()
     }
 
+    function redirectToCreateClaimCar() {
+        props.history.push('/claims/car/create');
+        props.updateTitle('Gestion de Reclamos - Crear Reclamo Auto')
+    }
+
     const GetClaimsCar = () => {
         axios.get('/api/Claim/Car/GetAll', { headers: { 'Authorization': localStorage.getItem(ACCESS_TOKEN_NAME) } })
             .then(function (response) {
@@ -164,6 +169,12 @@ function ClaimsCar(props) {
 
     return (
         <div>
+            <br />
+            <button
+                type="submit"
+                className="btn btn-primary float-right"
+                onClick={redirectToCreateClaimCar}
+            >Crear Reclamo Auto</button>
             <br />
             <button
                 type="submit"
