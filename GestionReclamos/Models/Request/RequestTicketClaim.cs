@@ -11,5 +11,7 @@ namespace GestionReclamos.Models
         public string Description { get; set; }
         public DateTime FlightDate { get; set; }
         public string Airline { get; set; }
+        public int Ticket { get; set; }
+
     }
 }

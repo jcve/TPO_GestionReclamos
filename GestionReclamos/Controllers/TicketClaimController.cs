@@ -62,6 +62,7 @@ namespace GestionReclamos.Controllers
                 var nuevoReclamo = new ReclamoPasaje
                 {
                     FechaCreacion = DateTime.Now,
+                    Ticket = reclamo.Ticket,
                     IdCliente = idCliente,
                     Descripcion = reclamo.Description,
                     Aerolinea = reclamo.Airline,
