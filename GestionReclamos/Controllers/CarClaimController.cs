@@ -118,11 +118,11 @@ namespace GestionReclamos.Controllers
 
         }
 
-        [HttpPost("Create")]
-        public async Task<IActionResult> CreateClaim([FromBody] RequestCarClaim reclamo) // Crear reclamo - EXTERNO
-        {
-            return null;
-        }
+        //[HttpPost("Create")]
+        //public async Task<IActionResult> CreateClaim([FromBody] RequestCarClaim reclamo) // Crear reclamo - EXTERNO
+        //{
+        //    return null;
+        //}
 
         [ProducesResponseType(typeof(ResponseCarClaimAll), 200)]
         [ProducesResponseType(typeof(string), 401)]
