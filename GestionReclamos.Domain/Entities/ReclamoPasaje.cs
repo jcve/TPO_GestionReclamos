@@ -12,6 +12,7 @@ namespace GestionReclamos.Domain.Entities
             //HistorialEstados = new List<HistorialReclamoPasaje>();
         }
         public int Id { get; set; }
+        public int Ticket { get; set; }
         public DateTime FechaCreacion { get; set; }
         public int IdCliente { get; set; }
         public string Descripcion { get; set; }
