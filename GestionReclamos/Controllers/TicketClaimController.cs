@@ -90,7 +90,7 @@ namespace GestionReclamos.Controllers
             }
         }
 
-        [ProducesResponseType(typeof(ResponseClaimCreated), 200)]
+        [ProducesResponseType(typeof(ResponseClaimModify), 200)]
         [ProducesResponseType(typeof(string), 401)]
         [HttpPost("Modify")]
         public async Task<IActionResult> ModifyClaim([FromBody] RequestModifyTicketClaim reclamo) // Modificar reclamo
