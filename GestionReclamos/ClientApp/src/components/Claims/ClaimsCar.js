@@ -15,12 +15,22 @@ import Paper from '@material-ui/core/Paper';
 import { Button } from '@material-ui/core';
 
 import FormDialog from "../Common/FormDialog";
+import FormDialogCreateClaimCar from "../Common/FormDialogCreateClaimCar";
+
+
+import Alert from '@material-ui/lab/Alert';
+import IconButton from '@material-ui/core/IconButton';
+import Collapse from '@material-ui/core/Collapse';
 
 function ClaimsCar(props) {
     const [state, setState] = useState({
         claims: [],
         estados: []
     })
+    const [open, setOpen] = useState(false);
+
+    const [severityAlert, setSeverityAlert] = useState('');
+    const [messageAlert, setMessageAlert] = useState('');
 
     const useStyles = makeStyles({
         table: {
@@ -156,26 +166,78 @@ function ClaimsCar(props) {
         }
     }
 
+    const CreateClaimCarDialog = () => {
+        console.log('entra')
+        return (
+            <FormDialog estados={state.estados}
+                title={`Reclamo con identificador: asdfasdf`} 
+                buttontext='Modificarasdf' content='Modifique asdfasdflos campos necesarios' />
+        )
+    }
 
-    // function ModifyClaimDialog(row){
-    //     // console.log(`acaa  modify   ${row}`)
-    //     return <FormDialog props={{title: row.estado}} />
-    // }
+    const APICall = (client,description,plate,model,brand,airport) => {    
+        const payload = {
+          "client": client,
+          "description": description,
+          "plate": plate,
+          "model": model,
+          "brand": brand,
+          "airport": airport
+        }
+  
+        axios.post('/api/Claim/Car/New', payload, { headers: { 'Authorization': localStorage.getItem(ACCESS_TOKEN_NAME) } })
+          .then(function (response) {
+              if (response.status == 200) {
+                  console.log(response.data)
+                  if (response.data.message == "OK") {
+                      setOpen(true)
+                      setSeverityAlert('success')
+                      setMessageAlert(`Reclamo creado con el identificador ${response.data.idClaim}`)
+                      //window.alert(`Reclamo creado con el identificador ${response.data.idClaim}`);
+                      
+                  }
+                  if (response.data.message != "OK"){   
+                    setOpen(true)
+                    setSeverityAlert('error')
+                    setMessageAlert("Ocurrio un error general.")               
+                    // window.alert("Ocurrio un error general.");
+                  }
+              } else {     
+                setOpen(true)
+                setSeverityAlert('warning')
+                setMessageAlert("Ocurrio un error en la comunicacion, intente nuevamente.")               
+                //   window.alert("Ocurrio un error en la comunicacion, intente nuevamente.");
+              }
+          })
+          .catch(function (error) {
+              console.log(error);
+          });
+    }
 
-    // const handleClick = (row) => {
-    //     // console.log(`acaa  sdfkjsdkjfnsdf   ${row}`)
-    //     return <FormDialog props={{title: row.estado}} />
-    // }
+
 
     return (
         <div>
             <br />
-            <button
+            <Collapse in={open}>
+                <Alert severity={severityAlert}
+                       onClose={() => {setOpen(false)}}>
+                    {messageAlert}                
+                </Alert>
+            </Collapse>
+
+            <FormDialogCreateClaimCar 
                 type="submit"
                 className="btn btn-primary float-right"
-                onClick={redirectToCreateClaimCar}
-            >Crear Reclamo Auto</button>
+                title={`Crear un nuevo reclamo de auto`} 
+                buttontext='Crear Reclamo Auto' 
+                content='Cargue los siguientes datos'
+                apicall = {(client,description,plate,model,brand,airport) => {
+                    APICall(client,description,plate,model,brand,airport);
+                }}
+                />
             <br />
+
             <button
                 type="submit"
                 className="btn btn-info"

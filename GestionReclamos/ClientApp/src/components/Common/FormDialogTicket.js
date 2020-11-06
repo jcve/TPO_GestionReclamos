@@ -17,7 +17,6 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 
 export default function FormDialogTicket(props) {
-  console.log(`adentro del fromdialog -------- ${props.title}`)
   const [open, setOpen] = useState(false);
   const [estados, setEstados] = useState([]);
   const [estado, setEstado] = useState('');
