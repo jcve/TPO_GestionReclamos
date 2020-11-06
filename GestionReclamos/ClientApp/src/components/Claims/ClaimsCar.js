@@ -135,7 +135,15 @@ function ClaimsCar(props) {
                 <TableCell>{row.value.ultimaModificacion}</TableCell>
                 <TableCell>{row.value.estado}</TableCell>
                 <TableCell>
-                    <FormDialog claim={row.value} estados={state.estados} title={`Reclamo con identificador: ${row.value.id}`} buttontext='Modificar' content='Modifique los campos necesarios' />
+                    <FormDialog claim={row.value} 
+                                estados={state.estados} 
+                                title={`Reclamo con identificador: ${row.value.id}`} 
+                                buttontext='Modificar' 
+                                content='Modifique los campos necesarios' 
+                                apicallstate={(id,client,description,plate,model,brand,airport,nuevoEstado)=>{
+                                    APICallState(id,client,description,plate,model,brand,airport,nuevoEstado)
+                                }}
+                                />
                     {/* <Button style={{backgroundColor: 'black', color: 'white'}} 
                         onClick={(e) => handleClick(e.target.value = row.value)}
                     >Eliminar</Button> */}
@@ -214,6 +222,50 @@ function ClaimsCar(props) {
           });
     }
 
+    const APICallState = (id,client,description,plate,model,brand,airport,nuevoEstado) => {
+        const payload = {
+            "Id": id,
+            "Client":client,
+            "Description":description,
+            "Plate":plate,
+            "Model":model,
+            "Brand":brand,
+            "Airport":airport,
+            "State": nuevoEstado
+        }
+    
+        axios.post('/api/Claim/Car/Modify', payload, { headers: { 'Authorization': localStorage.getItem(ACCESS_TOKEN_NAME) } })
+            .then(function (response) {
+                if (response.status == 200) {
+                    console.log(response.data)
+                    if (response.data.message == "OK") {
+                        setOpen(true)
+                        setSeverityAlert('success')
+                        setMessageAlert(`El reclamo con identificador: ${response.data.idClaim} fue modificado correctamente!`)
+                        // window.alert(`El reclamo con identificador: ${response.data.idClaim} fue modificado correctamente!`);
+                        refreshPage()
+                    }
+                    if (response.data.message != "OK"){
+                        setOpen(true)
+                        setSeverityAlert('error')
+                        setMessageAlert("Ocurrio un error general.")
+                        // props.showError("Ocurrio un error general.");
+                    }
+                } else {
+                    setOpen(true)
+                    setSeverityAlert('warning')
+                    setMessageAlert("Ocurrio un error en la comunicacion, intente nuevamente.")
+                    // props.showError("Ocurrio un error en la comunicacion, intente nuevamente.");
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });    
+    }
+
+    function refreshPage() {
+        window.location.reload(false);
+      }
 
 
     return (
