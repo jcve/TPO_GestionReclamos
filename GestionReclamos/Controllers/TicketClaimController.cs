@@ -36,58 +36,93 @@ namespace GestionReclamos.Controllers
         }
 
         [ProducesResponseType(typeof(ResponseClaimCreated), 200)]
+        [ProducesResponseType(typeof(ResponseClaimCreated), 400)]
         [ProducesResponseType(typeof(string), 401)]
+        [ProducesResponseType(typeof(ResponseClaimCreated), 500)]
         [HttpPost("New")]
-        public async Task<IActionResult> NewClaim([FromBody] RequestTicketClaim reclamo) // Nuevo reclamo
+        public async Task<IActionResult> NewClaim([FromBody] RequestTicketClaim claim, [FromHeader] string Authorization) // Nuevo reclamo
         {
             try
-            {               
-                //verificar que exista el cliente
-                var usr = _context.Set<Usuario>().Where(u => u.Correo == reclamo.Client).FirstOrDefault();
-                int idCliente = 0;
-                //si no existe, crearlo
-                if (usr == null)
+            {
+                var ticket = _context.Set<ReclamoPasaje>().Where(u => u.Ticket == claim.Ticket).FirstOrDefault();
+                if (ticket == null)
                 {
-                    var nuevoUsr = new Usuario { Correo = reclamo.Client };
-                    _context.Set<Usuario>().Add(nuevoUsr);
-                    await _context.SaveChangesAsync<Usuario>();
-                    idCliente = nuevoUsr.Id;                    
+                    //Si no existe lo obtengo
+                    httpClient.DefaultRequestHeaders.Add("Authorization", Authorization);
+                    httpClient.DefaultRequestHeaders.Add("client_id", client_id);
+                    httpClient.DefaultRequestHeaders.Add("client_secret", client_secret);
+                    var dataTicket = await httpClient.GetAsync(ventas_url + $"/api/verTickets/{claim.Ticket}");
+
+                    if ((int)dataTicket.StatusCode == 200)
+                    {
+                        var flight = JsonConvert.DeserializeObject<Flight>(await dataTicket.Content.ReadAsStringAsync());
+
+                        if (flight.Ticket == null)
+                        {
+                            return StatusCode(500, new ResponseClaimCreated() { Message = $"Ocurrio un error en el sistema de ventas al tratar de obtener el ticket {claim.Ticket}." });
+                        }
+
+                        //verificar que exista el cliente
+                        var usr = _context.Set<Usuario>().Where(u => u.Correo == claim.Client).FirstOrDefault();
+                        int clientId = 0;
+                        //si no existe, crearlo
+                        if (usr == null)
+                        {
+                            var newUser = new Usuario { Correo = claim.Client };
+                            _context.Set<Usuario>().Add(newUser);
+                            await _context.SaveChangesAsync<Usuario>();
+                            clientId = newUser.Id;
+                        }
+                        else
+                        {
+                            clientId = usr.Id;
+                        }
+
+                        var dbSetTicketClaims = _context.Set<ReclamoPasaje>();
+                        var nuevoReclamo = new ReclamoPasaje
+                        {
+                            FechaCreacion = DateTime.Now,
+                            Ticket = (int)flight.Ticket,
+                            IdCliente = clientId,
+                            Descripcion = claim.Description,
+                            Aerolinea = flight.Airline,
+                            FechaVuelo = (DateTime)flight.FlightDate,
+                            IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == "Nuevo").FirstOrDefault().Id,
+                            UltimaModificacion = DateTime.Now
+                        };
+
+                        dbSetTicketClaims.Add(nuevoReclamo);
+
+                        var cantRegistrosInsertados = await _context.SaveChangesAsync<ReclamoPasaje>();
+
+                        if (cantRegistrosInsertados.Equals(1)) // Se pudo insertar el registro
+                        {
+
+                            return Ok(new ResponseClaimCreated() { IdClaim = nuevoReclamo.Id, Message = $"Se creo correctamente el reclamo para el ticket {flight.Ticket}" });
+                        }
+
+                        // No se pudo insertar el registro
+                        return StatusCode(500, new ResponseClaimCreated() { Message = $"No se pudo crear correctamente el reclamo para el ticket {flight.Ticket}." });
+
+                    }
+                    else if ((int)dataTicket.StatusCode == 401) // 401 sistema de ventas
+                    {
+                        return BadRequest(new ResponseClaimCreated() { Message = $"El sistema de ventas respondio 401 para el ticket {claim.Ticket}." });
+                    }
+                    else // 500 sistema de ventas
+                    {
+                        return StatusCode(500, new ResponseClaimCreated() { Message = $"Ocurrio un error en el sistema de ventas al tratar de obtener el ticket {claim.Ticket}." });
+                    }
                 }
-                else
+                else // Ya existe el reclamo
                 {
-                    idCliente = usr.Id;
+                    return BadRequest(new ResponseClaimCreated() { Message = $"El reclamo para el ticket {claim.Ticket} ya existe." });
                 }
-
-                var dbSetTicketClaims = _context.Set<ReclamoPasaje>();
-                var nuevoReclamo = new ReclamoPasaje
-                {
-                    FechaCreacion = DateTime.Now,
-                    Ticket = reclamo.Ticket,
-                    IdCliente = idCliente,
-                    Descripcion = reclamo.Description,
-                    Aerolinea = reclamo.Airline,
-                    FechaVuelo = reclamo.FlightDate,                    
-                    IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == "Nuevo").FirstOrDefault().Id,
-                    UltimaModificacion = DateTime.Now                    
-                };
-
-                dbSetTicketClaims.Add(nuevoReclamo);
-
-                var cantRegistrosInsertados = await _context.SaveChangesAsync<ReclamoPasaje>();
-
-                if (cantRegistrosInsertados.Equals(1))
-                {
-
-                    return Ok(new ResponseClaimCreated() { IdClaim = nuevoReclamo.Id, Message = "OK" });
-                }
-
-                return Ok(new ResponseClaimCreated() { Message = "ERROR" });
-
             }
             catch (Exception ex)
             {
                 var t = ex;
-                throw;
+                return StatusCode(500, new ResponseClaimCreated() { Message = "Ocurrio un error general." });
             }
         }
 
@@ -105,47 +140,63 @@ namespace GestionReclamos.Controllers
                 var usuario = await _context.Set<Usuario>().Where(u => u.Correo == reclamo.Client).FirstOrDefaultAsync();
                 if (usuario != null)
                 {
-                    claim.FechaVuelo = reclamo.FlightDate;
-                    claim.IdCliente = usuario.Id;
-                    claim.Aerolinea = reclamo.Airline;
-                    claim.Descripcion = reclamo.Description;
-                    claim.IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
-                    claim.UltimaModificacion = DateTime.Now;
+                    int idestadoAnterior = _context.Set<ReclamoPasaje>().Where(e => e.Id == reclamo.Id).FirstOrDefault().IdEstado;
+                    int estadoAnterior = _context.Set<Estado>().Where(e => e.Id == idestadoAnterior).FirstOrDefault().Id;
+                    int estadoNuevo = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
 
-                    dbSetTicketClaims.Update(claim);
-
-                    var cantRegistrosInsertados = await _context.SaveChangesAsync<ReclamoPasaje>();
-
-                    if (cantRegistrosInsertados.Equals(1))
+                    if (estadoNuevo > estadoAnterior)
                     {
+                        claim.Descripcion = reclamo.Description;
+                        claim.IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
+                        claim.UltimaModificacion = DateTime.Now;
 
-                        return Ok(new ResponseClaimModify() { IdClaim = reclamo.Id, Message = "OK" });
+                        dbSetTicketClaims.Update(claim);
+
+                        var cantRegistrosInsertados = await _context.SaveChangesAsync<ReclamoPasaje>();
+
+                        if (cantRegistrosInsertados.Equals(1))
+                        {
+
+                            return Ok(new ResponseClaimModify() { IdClaim = reclamo.Id, Message = "OK" });
+                        }
                     }
+                    else
+                    {
+                        return Ok(new ResponseClaimModify() { Message = "No se puede cambiar a un estado inferior." });
+                    }
+
                 }
                 //crear el usuarios y dsp agregar
                 else 
                 {
-                    var nuevoUsr = new Usuario { Correo = reclamo.Client };
-                    _context.Set<Usuario>().Add(nuevoUsr);
-                    await _context.SaveChangesAsync<Usuario>();
-                    var idCliente = nuevoUsr.Id;
+                    int idestadoAnterior = _context.Set<ReclamoPasaje>().Where(e => e.Id == reclamo.Id).FirstOrDefault().IdEstado;
+                    int estadoAnterior = _context.Set<Estado>().Where(e => e.Id == idestadoAnterior).FirstOrDefault().Id;
+                    int estadoNuevo = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
 
-
-                    claim.FechaVuelo = reclamo.FlightDate;
-                    claim.IdCliente = idCliente;
-                    claim.Aerolinea = reclamo.Airline;
-                    claim.Descripcion = reclamo.Description;
-                    claim.IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
-                    claim.UltimaModificacion = DateTime.Now;
-
-                    dbSetTicketClaims.Update(claim);
-
-                    var cantRegistrosInsertados = await _context.SaveChangesAsync<ReclamoPasaje>();
-
-                    if (cantRegistrosInsertados.Equals(1))
+                    if (estadoNuevo > estadoAnterior)
                     {
+                        var nuevoUsr = new Usuario { Correo = reclamo.Client };
+                        _context.Set<Usuario>().Add(nuevoUsr);
+                        await _context.SaveChangesAsync<Usuario>();
+                        var idCliente = nuevoUsr.Id;
 
-                        return Ok(new ResponseClaimModify() { IdClaim = reclamo.Id, Message = "OK" });
+                        claim.Descripcion = reclamo.Description;
+                        claim.IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
+                        claim.UltimaModificacion = DateTime.Now;
+
+                        dbSetTicketClaims.Update(claim);
+
+                        var cantRegistrosInsertados = await _context.SaveChangesAsync<ReclamoPasaje>();
+
+                        if (cantRegistrosInsertados.Equals(1))
+                        {
+
+                            return Ok(new ResponseClaimModify() { IdClaim = reclamo.Id, Message = "OK" });
+                        }
+                    }
+                    else
+                    {
+                        return Ok(new ResponseClaimModify() { Message = "No se puede cambiar a un estado inferior." });
                     }
 
                 }
@@ -165,7 +216,6 @@ namespace GestionReclamos.Controllers
             {
                 if (claim.Ticket != 0 && !String.IsNullOrEmpty(claim.Client))
                 {
-                    // TODO: Verificar si existe el reclamo
                     var ticket = _context.Set<ReclamoPasaje>().Where(u => u.Ticket == claim.Ticket).FirstOrDefault();
                     if(ticket == null)
                     {
@@ -178,6 +228,11 @@ namespace GestionReclamos.Controllers
                         if ((int)dataTicket.StatusCode == 200)
                         {
                             var flight = JsonConvert.DeserializeObject<Flight>(await dataTicket.Content.ReadAsStringAsync());
+
+                            if(flight.Ticket == null)
+                            {
+                                return StatusCode(500, new ResponseClaimCreated() { Message = $"Ocurrio un error en el sistema de ventas al tratar de obtener el ticket {claim.Ticket}." });
+                            }
 
                             //verificar que exista el cliente
                             var usr = _context.Set<Usuario>().Where(u => u.Correo == claim.Client).FirstOrDefault();
@@ -199,11 +254,11 @@ namespace GestionReclamos.Controllers
                             var nuevoReclamo = new ReclamoPasaje
                             {
                                 FechaCreacion = DateTime.Now,
-                                Ticket = flight.Ticket,
+                                Ticket = (int)flight.Ticket,
                                 IdCliente = clientId,
                                 Descripcion = claim.Description,
                                 Aerolinea = flight.Airline,
-                                FechaVuelo = flight.FlightDate,
+                                FechaVuelo = (DateTime)flight.FlightDate,
                                 IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == "Nuevo").FirstOrDefault().Id,
                                 UltimaModificacion = DateTime.Now
                             };
@@ -262,6 +317,7 @@ namespace GestionReclamos.Controllers
                     {
                         Estado = estado.Descripcion,
                         Id = reclamoPasaje.Id,
+                        Ticket = reclamoPasaje.Ticket,
                         FechaCreacion = reclamoPasaje.FechaCreacion,
                         IdCliente = reclamoPasaje.IdCliente,
                         Descripcion = reclamoPasaje.Descripcion,
@@ -281,6 +337,7 @@ namespace GestionReclamos.Controllers
                         Cliente = usuario.Correo,
                         Estado = reclamoPasaje.Estado,
                         Id = reclamoPasaje.Id,
+                        Ticket = reclamoPasaje.Ticket,
                         FechaCreacion = reclamoPasaje.FechaCreacion,
                         IdCliente = reclamoPasaje.IdCliente,
                         Descripcion = reclamoPasaje.Descripcion,

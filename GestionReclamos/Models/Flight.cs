@@ -11,11 +11,11 @@ namespace GestionReclamos.Models
         public string Client { get; set; }
         public string Description { get; set; }
         [JsonProperty("fecha")]
-        public DateTime FlightDate { get; set; }
+        public DateTime? FlightDate { get; set; }
         [JsonProperty("aerolinea")]
         public string Airline { get; set; }
         [JsonProperty("ticket")]
-        public int Ticket { get; set; }
+        public int? Ticket { get; set; }
 
     }
 }
