@@ -313,7 +313,7 @@ namespace GestionReclamos.Controllers
                     _context.Set<Estado>(),
                     reclamoPasaje => reclamoPasaje.IdEstado,
                     estado => estado.Id,
-                    (reclamoPasaje, estado) => new ReclamoPasajeVM
+                    (reclamoPasaje, estado) => new Models.Response.ReclamoPasajeVM
                     {
                         Estado = estado.Descripcion,
                         Id = reclamoPasaje.Id,
@@ -332,7 +332,7 @@ namespace GestionReclamos.Controllers
                     _context.Set<Usuario>(),
                     reclamoPasaje => reclamoPasaje.IdCliente,
                     usuario => usuario.Id,
-                    (reclamoPasaje, usuario) => new ReclamoPasajeVM
+                    (reclamoPasaje, usuario) => new Models.Response.ReclamoPasajeVM
                     {
                         Cliente = usuario.Correo,
                         Estado = reclamoPasaje.Estado,
@@ -351,28 +351,37 @@ namespace GestionReclamos.Controllers
             return Ok(new ResponseTicketClaimAll() { TicketClaims = TicketClaims });
         }
 
-        [ProducesResponseType(typeof(ResponseTicketClaimAll), 200)]
+        [ProducesResponseType(typeof(ResponseReclamoPasaje), 200)]
         [ProducesResponseType(typeof(string), 401)]
         [HttpGet("Get/{id}")]
-        public async Task<IActionResult> GetClaim(int id) // Obtener reclamo - INTERNO/EXTERNO
+        public async Task<IActionResult> GetClaim(int Id) // Obtener reclamo - INTERNO/EXTERNO
         {
             try
             {
-                var claim = await _context.Set<ReclamoPasaje>().FindAsync(id);
-                var res = new ResponseTicketClaimAll();
-                if (claim != null)
+                var obj = await _context.Set<ReclamoPasaje>().Where(r => r.Id == Id).FirstOrDefaultAsync();
+                if (obj != null)
                 {
-                    res.TicketClaims.Add(new ReclamoPasajeVM()
+                    var resultado = new ResponseReclamoPasaje()
                     {
-                        //TODO corregir
-                        Estado = claim.IdEstado.ToString()
-                    });
+                        Id = obj.Id,
+                        IdCliente = obj.IdCliente,
+                        IdEstado = obj.IdEstado,
+                        Aerolinea = obj.Aerolinea,
+                        Descripcion = obj.Descripcion,
+                        FechaCreacion = obj.FechaCreacion,
+                        FechaVuelo = obj.FechaVuelo,
+                        Ticket = obj.Ticket,
+                        UltimaModificacion = obj.UltimaModificacion,
+                        Cliente = _context.Set<Usuario>().Where(u => u.Id == obj.IdCliente).FirstOrDefault().Correo,
+                        Estado = _context.Set<Estado>().Where(u => u.Id == obj.IdEstado).FirstOrDefault().Descripcion
+                    };
+                    return Ok(resultado);
                 }
-                return Ok(res);
+                return Ok(new ResponseReclamoPasaje());
             }
             catch (Exception ex)
             {
-                throw;
+                return Ok(new ResponseReclamoPasaje());
             }
         }
     }
