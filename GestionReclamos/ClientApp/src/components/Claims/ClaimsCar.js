@@ -19,7 +19,6 @@ import FormDialogCreateClaimCar from "../Common/FormDialogCreateClaimCar";
 
 
 import Alert from '@material-ui/lab/Alert';
-import IconButton from '@material-ui/core/IconButton';
 import Collapse from '@material-ui/core/Collapse';
 
 function ClaimsCar(props) {
@@ -218,7 +217,9 @@ function ClaimsCar(props) {
               }
           })
           .catch(function (error) {
-              console.log(error);
+            setOpen(true)
+            setSeverityAlert('error')
+            setMessageAlert(`Ocurrio un error general. ${error}`)
           });
     }
 
@@ -265,7 +266,7 @@ function ClaimsCar(props) {
 
     function refreshPage() {
         window.location.reload(false);
-      }
+    }
 
 
     return (

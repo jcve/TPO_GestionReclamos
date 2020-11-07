@@ -14,13 +14,22 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { Button } from '@material-ui/core';
 
-import FormDialog from "../Common/FormDialogTicket";
+import FormDialogCreateClaimTicket from "../Common/FormDialogCreateClaimTicket";
+
+import Alert from '@material-ui/lab/Alert';
+import Collapse from '@material-ui/core/Collapse';
+import FormDialogTicket from '../Common/FormDialogTicket';
 
 function ClaimsTicket(props) {
     const [state, setState] = useState({
         claims: [],
         estados: []
     })
+
+    const [open, setOpen] = useState(false);
+
+    const [severityAlert, setSeverityAlert] = useState('');
+    const [messageAlert, setMessageAlert] = useState('');
 
     const useStyles = makeStyles({
         table: {
@@ -115,6 +124,7 @@ function ClaimsTicket(props) {
         return (
             <TableRow key={row.value.id}>
                 <TableCell>{row.value.id}</TableCell>
+                <TableCell>{row.value.ticket}</TableCell>
                 <TableCell>{row.value.fechaCreacion}</TableCell>
                 <TableCell>{row.value.cliente}</TableCell>
                 <TableCell>{row.value.descripcion}</TableCell>
@@ -123,7 +133,15 @@ function ClaimsTicket(props) {
                 <TableCell>{row.value.ultimaModificacion}</TableCell>
                 <TableCell>{row.value.estado}</TableCell>
                 <TableCell>
-                    <FormDialog claim={row.value} estados={state.estados} title={`Reclamo con identificador: ${row.value.id}`} buttontext='Modificar' content='Modifique los campos necesarios' />
+                    <FormDialogTicket claim={row.value} 
+                                estados={state.estados} 
+                                title={`Reclamo con identificador: ${row.value.id}`} 
+                                buttontext='Modificar' 
+                                content='Modifique los campos necesarios' 
+                                apicallstate={(id,client,description,flightDate,airline,nuevoEstado)=>{
+                                    APICallState(id,client,description,flightDate,airline,nuevoEstado)
+                                }}
+                                />
                     {/* <Button style={{backgroundColor: 'black', color: 'white'}} 
                         onClick={(e) => handleClick(e.target.value = row.value)}
                     >Eliminar</Button> */}
@@ -154,26 +172,108 @@ function ClaimsTicket(props) {
         }
     }
 
+    const APICall = (client,description,ticketId) => {    
+        // const fecha = new Date(flightDate + " " + time);
+        const payload = {
+            "client": client,
+            "description": description,
+            "ticket": ticketId
+        }
+        console.log(payload);
+        axios.post('/api/Claim/Ticket/New', payload, { headers: { 'Authorization': localStorage.getItem(ACCESS_TOKEN_NAME) } })
+            .then(function (response) {
+                if (response.status == 200) {
+                    console.log(response.data)
+                    if (response.data.message == "OK") {
+                        setOpen(true)
+                        setSeverityAlert('success')
+                        setMessageAlert(`Reclamo creado con el identificador ${response.data.idClaim}`)
+                    }
+                    if (response.data.message != "OK"){
+                        setOpen(true)
+                        setSeverityAlert('error')
+                        setMessageAlert("Ocurrio un error general.")
+                    }
+                       
+                } else {
+                    setOpen(true)
+                    setSeverityAlert('warning')
+                    setMessageAlert("Ocurrio un error en la comunicacion, intente nuevamente.")
+                }
+            })
+            .catch(function (error) {
+                setOpen(true)
+                setSeverityAlert('error')
+                setMessageAlert(`Ocurrio un error general. ${error}`)
+            });
+    }
 
-    // function ModifyClaimDialog(row){
-    //     // console.log(`acaa  modify   ${row}`)
-    //     return <FormDialog props={{title: row.estado}} />
-    // }
+    const APICallState = (id,client,description,flightDate,airline,nuevoEstado) => {
+        const payload = {
+            "Id": id,
+            "Client":client,
+            "Description":description,
+            "FlightDate":flightDate,
+            "Airline":airline,
+            "State": nuevoEstado
+        }
+    
+        axios.post('/api/Claim/Ticket/Modify', payload, { headers: { 'Authorization': localStorage.getItem(ACCESS_TOKEN_NAME) } })
+            .then(function (response) {
+                if (response.status == 200) {
+                    console.log(response.data)
+                    if (response.data.message == "OK") {
+                        setOpen(true)
+                        setSeverityAlert('success')
+                        setMessageAlert(`El reclamo con identificador: ${response.data.idClaim} fue modificado correctamente!`)
 
-    // const handleClick = (row) => {
-    //     // console.log(`acaa  sdfkjsdkjfnsdf   ${row}`)
-    //     return <FormDialog props={{title: row.estado}} />
-    // }
+                        refreshPage()
+                    }
+                    if (response.data.message != "OK"){
+                        setOpen(true)
+                        setSeverityAlert('error')
+                        setMessageAlert("Ocurrio un error general.")
+                    }
+                } else {
+                    setOpen(true)
+                    setSeverityAlert('warning')
+                    setMessageAlert("Ocurrio un error en la comunicacion, intente nuevamente.")
+                }
+            })
+            .catch(function (error) {
+                setOpen(true)
+                setSeverityAlert('error')
+                setMessageAlert(`Ocurrio un error general. ${error}`)
+                // console.log(error);
+            });
+    }
+
+    function refreshPage() {
+        window.location.reload(false);
+    }
 
     return (
         <div>
             <br />
-            <button
+            <Collapse in={open}>
+                <Alert severity={severityAlert}
+                       onClose={() => {setOpen(false)}}>
+                    {messageAlert}                
+                </Alert>
+            </Collapse>
+
+            <FormDialogCreateClaimTicket 
                 type="submit"
                 className="btn btn-primary float-right"
-                onClick={redirectToCreateClaimTicket}
-            >Crear Reclamo Pasaje</button>
+                title={`Crear un nuevo reclamo de Pasaje`} 
+                buttontext='Crear Reclamo Pasaje' 
+                content='Cargue los siguientes datos'
+                apicall = {(client,description,ticketId) => {
+                    APICall(client,description,ticketId);
+                }}
+            />
             <br />
+
             <button
                 type="submit"
                 className="btn btn-info"
@@ -192,6 +292,7 @@ function ClaimsTicket(props) {
                     <TableHead>
                         <TableRow>
                             <TableCell align="right">ID</TableCell>
+                            <TableCell align="right">Ticket ID</TableCell>
                             <TableCell align="right">Fecha Creación</TableCell>
                             <TableCell align="right">Correo asociado</TableCell>
                             <TableCell align="right">Descripción</TableCell>
