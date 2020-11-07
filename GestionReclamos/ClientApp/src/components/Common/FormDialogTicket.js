@@ -49,33 +49,7 @@ export default function FormDialogTicket(props) {
 
 
   const changeState = (nuevoEstado) => {
-    // console.log(`algo2 -------- ${event}`)
-    const payload = {
-        "Id": id,
-        "Client":client,
-        "Description":description,
-        "FlightDate":flightDate,
-        "Airline":airline,
-        "State": nuevoEstado
-    }
-
-    axios.post('/api/Claim/Ticket/Modify', payload, { headers: { 'Authorization': localStorage.getItem(ACCESS_TOKEN_NAME) } })
-        .then(function (response) {
-            if (response.status == 200) {
-                console.log(response.data)
-                if (response.data.message == "OK") {
-                  window.alert(`El reclamo con identificador: ${response.data.idClaim} fue modificado correctamente!`);
-                }
-                if (response.data.message != "OK")
-                    props.showError("Ocurrio un error general.");
-            } else {
-                props.showError("Ocurrio un error en la comunicacion, intente nuevamente.");
-            }
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
-
+    props.apicallstate(id,client,description,flightDate,airline,nuevoEstado)
     handleClose()
   }
 
@@ -114,6 +88,7 @@ export default function FormDialogTicket(props) {
                     margin="dense"
                     id="client"
                     label="Correo"
+                    disabled={true}
                     type="email"
                     fullWidth
                     value={client}
@@ -134,6 +109,7 @@ export default function FormDialogTicket(props) {
                     margin="dense"
                     id="airline"
                     label="Aerolinea"
+                    disabled={true}
                     type="text"
                     fullWidth
                     value={airline}
@@ -143,6 +119,7 @@ export default function FormDialogTicket(props) {
                 <TextField
                     id="datetime-local"
                     label="Fecha vuelo"
+                    disabled={true}
                     type="datetime-local"
                     defaultValue={flightDate}
                     InputLabelProps={{
