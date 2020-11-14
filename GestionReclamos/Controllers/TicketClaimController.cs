@@ -3,6 +3,7 @@ using GestionReclamos.Domain.Entities;
 using GestionReclamos.Models;
 using GestionReclamos.Models.Request;
 using GestionReclamos.Models.Response;
+using GestionReclamos.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -92,12 +93,12 @@ namespace GestionReclamos.Controllers
                         };
 
                         dbSetTicketClaims.Add(nuevoReclamo);
-
                         var cantRegistrosInsertados = await _context.SaveChangesAsync<ReclamoPasaje>();
+
 
                         if (cantRegistrosInsertados.Equals(1)) // Se pudo insertar el registro
                         {
-
+                            await MailService.EnviarMail("Gestión de Reclamos - Se creo un reclamo!", claim.Client, $"Un operador creo un reclamo asociado a tu correo con el identificador: {nuevoReclamo.Id} - Descripción: {nuevoReclamo.Descripcion}. Ante cualquier duda comunicate con nuestro centro de operadores.");
                             return Ok(new ResponseClaimCreated() { IdClaim = nuevoReclamo.Id, Message = $"Se creo correctamente el reclamo para el ticket {flight.Ticket}" });
                         }
 
@@ -156,6 +157,16 @@ namespace GestionReclamos.Controllers
 
                         if (cantRegistrosInsertados.Equals(1))
                         {
+                            string estadoNuevoDescripcion = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Descripcion;
+
+                            if (estadoNuevoDescripcion == "Cerrado")
+                            {
+                                await MailService.EnviarMail("Gestión de Reclamos - Cerramos tu reclamo", reclamo.Client, $"El reclamo asociado a tu correo fue cerrado. Identificador {claim.Id} - Descripción: {claim.Descripcion}. Ante cualquier duda comunicate con nuestro centro de operadores.");
+                            }
+                            else if (estadoNuevoDescripcion == "Resuelto")
+                            {
+                                await MailService.EnviarMail("Gestión de Reclamos - Solucionamos tu reclamo", reclamo.Client, $"El reclamo asociado a tu correo fue solucionado. Identificador {claim.Id} - Descripción: {claim.Descripcion}. Ante cualquier duda comunicate con nuestro centro de operadores.");
+                            }
 
                             return Ok(new ResponseClaimModify() { IdClaim = reclamo.Id, Message = "OK" });
                         }
@@ -269,7 +280,7 @@ namespace GestionReclamos.Controllers
 
                             if (cantRegistrosInsertados.Equals(1)) // Se pudo insertar el registro
                             {
-
+                                await MailService.EnviarMail("Gestión de Reclamos - Recibimos un reclamo!", claim.Client, $"Recibimos un reclamo asociado a tu correo con el identificador: {nuevoReclamo.Id} - Descripción: {nuevoReclamo.Descripcion}. Ante cualquier duda comunicate con nuestro centro de operadores.");
                                 return Ok(new ResponseClaimCreated() { IdClaim = nuevoReclamo.Id, Message = $"Se creo correctamente el reclamo para el ticket {flight.Ticket}" });
                             }
 
@@ -359,6 +370,40 @@ namespace GestionReclamos.Controllers
             try
             {
                 var obj = await _context.Set<ReclamoPasaje>().Where(r => r.Id == Id).FirstOrDefaultAsync();
+                if (obj != null)
+                {
+                    var resultado = new ResponseReclamoPasaje()
+                    {
+                        Id = obj.Id,
+                        IdCliente = obj.IdCliente,
+                        IdEstado = obj.IdEstado,
+                        Aerolinea = obj.Aerolinea,
+                        Descripcion = obj.Descripcion,
+                        FechaCreacion = obj.FechaCreacion,
+                        FechaVuelo = obj.FechaVuelo,
+                        Ticket = obj.Ticket,
+                        UltimaModificacion = obj.UltimaModificacion,
+                        Cliente = _context.Set<Usuario>().Where(u => u.Id == obj.IdCliente).FirstOrDefault().Correo,
+                        Estado = _context.Set<Estado>().Where(u => u.Id == obj.IdEstado).FirstOrDefault().Descripcion
+                    };
+                    return Ok(resultado);
+                }
+                return Ok(new ResponseReclamoPasaje());
+            }
+            catch (Exception ex)
+            {
+                return Ok(new ResponseReclamoPasaje());
+            }
+        }
+
+        [ProducesResponseType(typeof(ResponseReclamoPasaje), 200)]
+        [ProducesResponseType(typeof(string), 401)]
+        [HttpGet("GetByTicket/{id}")]
+        public async Task<IActionResult> GetClaimByTicket(int Id) // Obtener reclamo por numero de ticket - INTERNO/EXTERNO
+        {
+            try
+            {
+                var obj = await _context.Set<ReclamoPasaje>().Where(r => r.Ticket == Id).FirstOrDefaultAsync();
                 if (obj != null)
                 {
                     var resultado = new ResponseReclamoPasaje()
