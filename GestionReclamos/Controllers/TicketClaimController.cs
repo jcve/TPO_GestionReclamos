@@ -37,9 +37,7 @@ namespace GestionReclamos.Controllers
         }
 
         [ProducesResponseType(typeof(ResponseClaimCreated), 200)]
-        [ProducesResponseType(typeof(ResponseClaimCreated), 400)]
         [ProducesResponseType(typeof(string), 401)]
-        [ProducesResponseType(typeof(ResponseClaimCreated), 500)]
         [HttpPost("New")]
         public async Task<IActionResult> NewClaim([FromBody] RequestTicketClaim claim, [FromHeader] string Authorization) // Nuevo reclamo
         {
