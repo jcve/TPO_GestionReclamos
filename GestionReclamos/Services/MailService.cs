@@ -10,17 +10,17 @@ namespace GestionReclamos.Services
 {
     public class MailService
     {
-        public async Task<bool> EnviarMail(string asunto, string destinatario, string mensaje)
+        public static async Task<bool> EnviarMail(string asunto, string destinatario, string mensaje)
         {
             try
             {
-                string user = "1a052d711d-9b63ab@inbox.mailtrap.io";
+                string user = "gestionreclamos.uade@gmail.com";
                 string password = "passwordGestionReclamos2020";
-                string server = "smtp.mailtrap.io";
+                string server = "smtp.gmail.com";
 
                 using (var client = new MailKit.Net.Smtp.SmtpClient())
                 {
-                    await client.ConnectAsync(server, 2525, SecureSocketOptions.Auto);
+                    await client.ConnectAsync(server, 587, SecureSocketOptions.Auto);
                     await client.AuthenticateAsync(user, password); // autentificacion
 
                     var message = new MimeMessage();
