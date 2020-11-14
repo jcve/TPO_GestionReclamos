@@ -59,7 +59,7 @@ namespace GestionReclamos.Controllers
 
                         if (flight.Ticket == null)
                         {
-                            return StatusCode(500, new ResponseClaimCreated() { Message = $"Ocurrio un error en el sistema de ventas al tratar de obtener el ticket {claim.Ticket}." });
+                            return StatusCode(200, new ResponseClaimCreated() { Message = $"Ocurrio un error en el sistema de ventas al tratar de obtener el ticket {claim.Ticket}." });
                         }
 
                         //verificar que exista el cliente
@@ -102,27 +102,27 @@ namespace GestionReclamos.Controllers
                         }
 
                         // No se pudo insertar el registro
-                        return StatusCode(500, new ResponseClaimCreated() { Message = $"No se pudo crear correctamente el reclamo para el ticket {flight.Ticket}." });
+                        return StatusCode(200, new ResponseClaimCreated() { Message = $"No se pudo crear correctamente el reclamo para el ticket {flight.Ticket}." });
 
                     }
                     else if ((int)dataTicket.StatusCode == 401) // 401 sistema de ventas
                     {
-                        return BadRequest(new ResponseClaimCreated() { Message = $"El sistema de ventas respondio 401 para el ticket {claim.Ticket}." });
+                        return Ok(new ResponseClaimCreated() { Message = $"El sistema de ventas respondio 401 para el ticket {claim.Ticket}." });
                     }
                     else // 500 sistema de ventas
                     {
-                        return StatusCode(500, new ResponseClaimCreated() { Message = $"Ocurrio un error en el sistema de ventas al tratar de obtener el ticket {claim.Ticket}." });
+                        return StatusCode(200, new ResponseClaimCreated() { Message = $"Ocurrio un error en el sistema de ventas al tratar de obtener el ticket {claim.Ticket}." });
                     }
                 }
                 else // Ya existe el reclamo
                 {
-                    return BadRequest(new ResponseClaimCreated() { Message = $"El reclamo para el ticket {claim.Ticket} ya existe." });
+                    return Ok(new ResponseClaimCreated() { Message = $"El reclamo para el ticket {claim.Ticket} ya existe." });
                 }
             }
             catch (Exception ex)
             {
                 var t = ex;
-                return StatusCode(500, new ResponseClaimCreated() { Message = "Ocurrio un error general." });
+                return StatusCode(200, new ResponseClaimCreated() { Message = "Ocurrio un error general." });
             }
         }
 
