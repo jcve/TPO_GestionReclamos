@@ -24,10 +24,10 @@ export default function FormDialogCreateClaimTicket(props) {
 
   const [client,setClient] = useState('');
   const [description,setDescription] = useState('');
-  const [ticketId,setTicketId] = useState(0);
-//   const [flightDate,setFlightDate] = useState('');
+  const [ticketId,setTicketId] = useState();
+  const [flightDate,setFlightDate] = useState('');
+  const [airline,setAirline] = useState('');
 //   const [time,setTime] = useState('');
-//   const [airline,setAirline] = useState('');
 
   const [errorInputClient,setErrorInputClient]  = useState(false);
   const [errorInputDescription,setErrorInputDescription]  = useState(false);
@@ -55,9 +55,13 @@ export default function FormDialogCreateClaimTicket(props) {
     setOpen(false);
   };
 
-  useEffect(() => {        
+  useEffect(() => {   
+      setFlightDate(props.flightDate)
+  }, [props.flightDate])
 
-  }, [])
+  useEffect(() => {        
+    setAirline(props.airline)
+  }, [props.airline])
 
   function cadaCampoTieneDatos(){
     // let arr = [client,description,plate,model,brand,airport]
@@ -156,6 +160,16 @@ export default function FormDialogCreateClaimTicket(props) {
     // setEstado(event.target.value);
   };
 
+  const getDatosTicket = (event) => {
+    if(ticketId > 0){
+      console.log('form ... claimticket' + ticketId)
+      console.log(event)
+      props.apicallgetticket(ticketId)    
+    }
+  }
+
+
+
   return (
     <div>
       <Button variant="outlined" color="primary" onClick={handleClickOpen}>
@@ -168,6 +182,24 @@ export default function FormDialogCreateClaimTicket(props) {
             {props.content}
           </DialogContentText>
             <FormControl style={{width:'500px'}}>
+              
+            <TextField
+                autoFocus
+                margin="dense"
+                id="ticketId"
+                label="Ticket Id"
+                placeholder="10008"
+                required={true}
+                error={errorInputTicketId}
+                type="number"
+                fullWidth
+                value={ticketId}
+                onChange={(e)=> setTicketId(parseInt(e.target.value))}
+              />
+            <Button onClick={(e)=> getDatosTicket(e.target.value)} color="primary">
+              Buscar Ticket
+            </Button>
+            
               <TextField
                 autoFocus
                 margin="dense"
@@ -195,59 +227,38 @@ export default function FormDialogCreateClaimTicket(props) {
                 onChange={(e)=> setDescription(e.target.value)}
               />
 
-              <TextField
-                autoFocus
-                margin="dense"
-                id="ticketId"
-                label="Ticket Id"
-                placeholder="10008"
-                required={true}
-                error={errorInputTicketId}
-                type="number"
-                fullWidth
-                value={ticketId}
-                onChange={(e)=> setTicketId(parseInt(e.target.value))}
-              />
 
-              {/* <TextField
-                autoFocus
-                margin="dense"
-                id="flightDate"
-                label="Fecha de vuelo"
-                placeholder="dd/mm/aaaa"
-                required={true}
-                error={errorInputFlightDate}
-                type="text"
-                fullWidth
-                value={flightDate}
-                onChange={(e)=> setFlightDate(e.target.value)}
-              />
-              <TextField
-                autoFocus
-                margin="dense"
-                id="time"
-                label="Horario de vuelo"
-                placeholder="--:--"
-                required={true}
-                error={errorInputTime}
-                type="text"
-                fullWidth
-                value={time}
-                onChange={(e)=> setTime(e.target.value)}
-              />
-              <TextField
-                autoFocus
-                margin="dense"
-                id="airline"
-                label="Aerolinea"
-                placeholder="Aerolineas Argentinas"
-                required={true}
-                error={errorInputAirline}
-                type="text"
-                fullWidth
-                value={airline}
-                onChange={(e)=> setAirline(e.target.value)}
-              />                            */}
+              {flightDate !==""
+                ? <TextField
+                    autoFocus
+                    margin="dense"
+                    id="flightDate"
+                    label="Fecha de vuelo"
+                    placeholder="dd/mm/aaaa"
+                    disabled={true}
+                    type="text"
+                    fullWidth
+                    value={flightDate}                
+                  />
+                : <div></div>
+              }
+
+              {airline !==""
+                ? <TextField
+                    autoFocus
+                    margin="dense"
+                    id="airline"
+                    label="Aerolinea"
+                    placeholder="Aerolineas Argentinas"
+                    disabled={true}
+                    type="text"
+                    fullWidth
+                    value={airline}
+                    
+                  />                
+                : <div></div>
+              }
+
             </FormControl>            
         </DialogContent>
         <DialogActions>

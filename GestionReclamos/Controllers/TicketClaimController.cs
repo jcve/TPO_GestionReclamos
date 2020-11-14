@@ -384,5 +384,59 @@ namespace GestionReclamos.Controllers
                 return Ok(new ResponseReclamoPasaje());
             }
         }
+
+
+        [ProducesResponseType(typeof(ResponseReclamoPasaje), 200)]
+        [ProducesResponseType(typeof(string), 401)]
+        [HttpPost("GetTicket")]
+        public async Task<IActionResult> GetTicket([FromBody] RequestTicketClaimCreate claim, [FromHeader] string Authorization) // Obtener reclamo - INTERNO/EXTERNO
+        {
+            try
+            {
+                if (claim.Ticket > 0) 
+                {
+                    //Si no existe lo obtengo
+                    httpClient.DefaultRequestHeaders.Add("Authorization", Authorization);
+                    httpClient.DefaultRequestHeaders.Add("client_id", client_id);
+                    httpClient.DefaultRequestHeaders.Add("client_secret", client_secret);
+                    var dataTicket = await httpClient.GetAsync(ventas_url + $"/api/verTickets/{claim.Ticket}");
+
+                    if ((int)dataTicket.StatusCode == 200)
+                    {
+                        var flight = JsonConvert.DeserializeObject<Flight>(await dataTicket.Content.ReadAsStringAsync());
+
+                        if (flight.Ticket == null)
+                        {
+                            return StatusCode(200, new ResponseClaimCreated() { Message = $"Ocurrio un error en el sistema de ventas al tratar de obtener el ticket {claim.Ticket}." });
+                        }
+
+                        var dbSetTicketClaims = _context.Set<ReclamoPasaje>();
+                        var nuevoReclamo = new ReclamoPasaje
+                        {
+                            Ticket = (int)flight.Ticket,
+                            Aerolinea = flight.Airline,
+                            FechaVuelo = (DateTime)flight.FlightDate,
+                        };
+
+                        return Ok(nuevoReclamo);
+                    }
+                    else if ((int)dataTicket.StatusCode == 401) // 401 sistema de ventas
+                    {
+                        return Ok(new ResponseClaimCreated() { Message = $"El sistema de ventas respondio 401 para el ticket {claim.Ticket}." });
+                    }
+                    else // 500 sistema de ventas
+                    {
+                        return StatusCode(200, new ResponseClaimCreated() { Message = $"Ocurrio un error en el sistema de ventas al tratar de obtener el ticket {claim.Ticket}." });
+                    }
+                }
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                var t = ex;
+                return StatusCode(200, new ResponseClaimCreated() { Message = "Ocurrio un error general." });
+            }
+        }
+
     }
 }

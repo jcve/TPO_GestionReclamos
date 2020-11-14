@@ -20,6 +20,8 @@ import Alert from '@material-ui/lab/Alert';
 import Collapse from '@material-ui/core/Collapse';
 import FormDialogTicket from '../Common/FormDialogTicket';
 
+import LinearProgress from '@material-ui/core/LinearProgress';
+
 function ClaimsTicket(props) {
     const [state, setState] = useState({
         claims: [],
@@ -27,9 +29,13 @@ function ClaimsTicket(props) {
     })
 
     const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const [severityAlert, setSeverityAlert] = useState('');
     const [messageAlert, setMessageAlert] = useState('');
+
+    const [Airline, setAirline] = useState('');
+    const [FlightDate, setFlightDate] = useState('');
 
     const useStyles = makeStyles({
         table: {
@@ -57,7 +63,6 @@ function ClaimsTicket(props) {
             [id]: value
         }))
     }
-
     const redirectToHome = () => {
         props.updateTitle('Gestion de Reclamos - Inicio')
         props.history.push('/home');
@@ -157,6 +162,7 @@ function ClaimsTicket(props) {
             const listclaims = claims.map((claim) =>
                 <ClaimItem key={claim.id} value={claim} />
             );
+            setLoading(false)
             return (
                 <TableBody>
                     {listclaims}
@@ -164,6 +170,7 @@ function ClaimsTicket(props) {
             );
         }
         else {
+            setLoading(false)
             return (
                 <TableBody>
                     {}
@@ -182,23 +189,17 @@ function ClaimsTicket(props) {
         console.log(payload);
         axios.post('/api/Claim/Ticket/New', payload, { headers: { 'Authorization': localStorage.getItem(ACCESS_TOKEN_NAME) } })
             .then(function (response) {
-                if (response.status == 200) {
-                    console.log(response.data)
-                    if (response.data.message == "OK") {
-                        setOpen(true)
-                        setSeverityAlert('success')
-                        setMessageAlert(`Reclamo creado con el identificador ${response.data.idClaim}`)
-                    }
-                    if (response.data.message != "OK"){
-                        setOpen(true)
-                        setSeverityAlert('error')
-                        setMessageAlert("Ocurrio un error general.")
-                    }
-                       
-                } else {
+                if (response.status == 200 && response.data.idclaim !== "" && response.data.idclaim != undefined ) {
+                    setOpen(true)
+                    setSeverityAlert('success')
+                    setMessageAlert(`Reclamo creado con el identificador ${response.data.idclaim}`)   
+                    
+                    refreshPage()                   
+                }               
+                else {
                     setOpen(true)
                     setSeverityAlert('warning')
-                    setMessageAlert("Ocurrio un error en la comunicacion, intente nuevamente.")
+                    setMessageAlert(`${response.data.message}`)
                 }
             })
             .catch(function (error) {
@@ -248,6 +249,35 @@ function ClaimsTicket(props) {
             });
     }
 
+
+    const APICallGetTicket = (ticketId) =>{
+
+        const payload = {
+            "ticket": ticketId
+        }
+        console.log(payload)
+        axios.post('/api/Claim/Ticket/GetTicket', payload, { headers: { 'Authorization': localStorage.getItem(ACCESS_TOKEN_NAME) } })
+            .then(function (response) {
+                console.log(response)
+
+                
+                setAirline(response.data.aerolinea)
+                setFlightDate(response.data.fechaVuelo)
+
+                if (response.status != 200) {
+                    setOpen(true)
+                    setSeverityAlert('warning')
+                    setMessageAlert(`${response.data.message}`)
+                }
+            })
+            .catch(function (error) {
+                setOpen(true)
+                setSeverityAlert('error')
+                setMessageAlert(`Ocurrio un error general. ${error}`)
+            });
+
+    }
+
     function refreshPage() {
         window.location.reload(false);
     }
@@ -271,6 +301,14 @@ function ClaimsTicket(props) {
                 apicall = {(client,description,ticketId) => {
                     APICall(client,description,ticketId);
                 }}
+                apicallgetticket = {(ticketId) => {
+                    if(ticketId!==0){
+                        console.log('claimticket' + ticketId)
+                        APICallGetTicket(ticketId);
+                    }
+                }}
+                airline = {Airline}
+                flightDate = {FlightDate}
             />
             <br />
 
@@ -306,6 +344,13 @@ function ClaimsTicket(props) {
                     <ClaimList />
                 </Table>
             </TableContainer>
+
+            {loading
+                ? <LinearProgress color="secondary" />
+                :  <br />
+            }
+            <br /> 
+
         </div>
 
 

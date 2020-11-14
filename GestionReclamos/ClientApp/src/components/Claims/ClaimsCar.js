@@ -21,12 +21,15 @@ import FormDialogCreateClaimCar from "../Common/FormDialogCreateClaimCar";
 import Alert from '@material-ui/lab/Alert';
 import Collapse from '@material-ui/core/Collapse';
 
+import LinearProgress from '@material-ui/core/LinearProgress';
+
 function ClaimsCar(props) {
     const [state, setState] = useState({
         claims: [],
         estados: []
     })
     const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const [severityAlert, setSeverityAlert] = useState('');
     const [messageAlert, setMessageAlert] = useState('');
@@ -47,7 +50,7 @@ function ClaimsCar(props) {
 
     useEffect(() => {
         // console.log(`state.claims ${state.claims}`)
-        console.log(`state.estados ${state.estados}`)
+        console.log(`state.estados ${state.estados}`)        
     }, [state.claims])
 
     const handleChange = (e) => {
@@ -131,7 +134,7 @@ function ClaimsCar(props) {
                 <TableCell>{row.value.marca}</TableCell>
                 <TableCell>{row.value.modelo}</TableCell>
                 <TableCell>{row.value.patente}</TableCell>
-                <TableCell>{row.value.ultimaModificacion}</TableCell>
+                <TableCell>{new Date(row.value.ultimaModificacion).toUTCString()}</TableCell>
                 <TableCell>{row.value.estado}</TableCell>
                 <TableCell>
                     <FormDialog claim={row.value} 
@@ -158,6 +161,7 @@ function ClaimsCar(props) {
             const listclaims = claims.map((claim) =>
                 <ClaimItem key={claim.id} value={claim} />
             );
+            setLoading(false)
             return (
                 <TableBody>
                     {listclaims}
@@ -165,6 +169,7 @@ function ClaimsCar(props) {
             );
         }
         else {
+            setLoading(false)
             return (
                 <TableBody>
                     {}
@@ -201,7 +206,7 @@ function ClaimsCar(props) {
                       setSeverityAlert('success')
                       setMessageAlert(`Reclamo creado con el identificador ${response.data.idClaim}`)
                       //window.alert(`Reclamo creado con el identificador ${response.data.idClaim}`);
-                      
+                      refreshPage()                      
                   }
                   if (response.data.message != "OK"){   
                     setOpen(true)
@@ -304,6 +309,7 @@ function ClaimsCar(props) {
                 Recargar esta Lista
                 </button>
             <br />
+
             <TableContainer component={Paper}>
                 <Table className={classes.table} aria-label="simple table">
                     <TableHead>
@@ -324,6 +330,13 @@ function ClaimsCar(props) {
                     <ClaimList />
                 </Table>
             </TableContainer>
+
+            {loading
+                ? <LinearProgress color="secondary" />
+                :  <br />
+            }
+
+            <br />                        
         </div>
 
 
