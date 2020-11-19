@@ -124,18 +124,20 @@ function ClaimsCar(props) {
 
 
     function ClaimItem(row) {
+
+        let options = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric'};
         return (
             <TableRow key={row.value.id}>
-                <TableCell>{row.value.id}</TableCell>
+                <TableCell style={{ fontWeight:'bold' }} >{row.value.id}</TableCell>
                 <TableCell>{row.value.aeropuerto}</TableCell>
                 <TableCell>{row.value.descripcion}</TableCell>
-                <TableCell>{row.value.fechaCreacion}</TableCell>
+                <TableCell>{new Date(row.value.fechaCreacion).toLocaleDateString('es-AR', options)}</TableCell>
                 <TableCell>{row.value.cliente}</TableCell>
                 <TableCell>{row.value.marca}</TableCell>
                 <TableCell>{row.value.modelo}</TableCell>
                 <TableCell>{row.value.patente}</TableCell>
-                <TableCell>{new Date(row.value.ultimaModificacion).toUTCString()}</TableCell>
-                <TableCell>{row.value.estado}</TableCell>
+                <TableCell>{new Date(row.value.ultimaModificacion).toLocaleDateString('es-AR', options)}</TableCell>
+                <TableCell style={{ fontWeight: 'bold' }} >{row.value.estado}</TableCell>
                 <TableCell>
                     <FormDialog claim={row.value} 
                                 estados={state.estados} 
@@ -254,7 +256,7 @@ function ClaimsCar(props) {
                     if (response.data.message != "OK"){
                         setOpen(true)
                         setSeverityAlert('error')
-                        setMessageAlert("Ocurrio un error general.")
+                        setMessageAlert(`Ocurrio un error.${response.data.message} `)
                         // props.showError("Ocurrio un error general.");
                     }
                 } else {

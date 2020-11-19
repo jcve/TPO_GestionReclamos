@@ -143,7 +143,7 @@ namespace GestionReclamos.Controllers
                     int estadoAnterior = _context.Set<Estado>().Where(e => e.Id == idestadoAnterior).FirstOrDefault().Id;
                     int estadoNuevo = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
 
-                    if (estadoNuevo > estadoAnterior)
+                    if (estadoNuevo >= estadoAnterior)
                     {
                         claim.Descripcion = reclamo.Description;
                         claim.IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;

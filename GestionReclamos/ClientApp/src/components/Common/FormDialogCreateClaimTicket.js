@@ -261,9 +261,13 @@ export default function FormDialogCreateClaimTicket(props) {
 
             </FormControl>            
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancelar
+        <DialogActions>                  
+                  <Button onClick={() => {
+                      props.callCancelar();
+                      setTicketId('');
+                      handleClose();
+                  }} color="primary">
+                Cancelar
           </Button>
           <Button onClick={() => crearReclamo()} color="primary">
             Crear

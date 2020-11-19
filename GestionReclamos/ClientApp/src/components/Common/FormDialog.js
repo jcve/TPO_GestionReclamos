@@ -102,6 +102,7 @@ export default function FormDialog(props) {
                     type="email"
                     fullWidth
                     value={client}
+                    disabled={true}
                     onChange={(e)=> setClient(e.target.value)}
                 />
                 <TextField
@@ -121,7 +122,8 @@ export default function FormDialog(props) {
                   label="Patente"
                   type="text"
                   fullWidth
-                  value={plate}
+                 value={plate}
+                 disabled={true}
                   onChange={(e)=> setPlate(e.target.value)}
                 />
                  <TextField
@@ -152,6 +154,7 @@ export default function FormDialog(props) {
                   type="text"
                   fullWidth
                   value={airport}
+                  disabled={true}
                   onChange={(e)=> setAirport(e.target.value)}
                 />
             </FormControl>
