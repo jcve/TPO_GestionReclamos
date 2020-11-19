@@ -126,17 +126,19 @@ function ClaimsTicket(props) {
 
 
     function ClaimItem(row) {
+        let options = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+
         return (
             <TableRow key={row.value.id}>
-                <TableCell>{row.value.id}</TableCell>
-                <TableCell>{row.value.ticket}</TableCell>
-                <TableCell>{row.value.fechaCreacion}</TableCell>
+                <TableCell style={{ fontWeight: 'bold' }} >{row.value.id}</TableCell>
+                <TableCell style={{ fontWeight: 'bold' }} >{row.value.ticket}</TableCell>
+                <TableCell>{new Date(row.value.fechaCreacion).toLocaleDateString('es-AR', options)}</TableCell>
                 <TableCell>{row.value.cliente}</TableCell>
                 <TableCell>{row.value.descripcion}</TableCell>
-                <TableCell>{row.value.fechaVuelo}</TableCell>
+                <TableCell>{new Date(row.value.fechaVuelo).toLocaleDateString('es-AR', options)}</TableCell>
                 <TableCell>{row.value.aerolinea}</TableCell>
-                <TableCell>{row.value.ultimaModificacion}</TableCell>
-                <TableCell>{row.value.estado}</TableCell>
+                <TableCell>{new Date(row.value.ultimaModificacion).toLocaleDateString('es-AR', options)}</TableCell>
+                <TableCell style={{ fontWeight: 'bold' }} >{row.value.estado}</TableCell>
                 <TableCell>
                     <FormDialogTicket claim={row.value} 
                                 estados={state.estados} 
@@ -189,10 +191,10 @@ function ClaimsTicket(props) {
         console.log(payload);
         axios.post('/api/Claim/Ticket/New', payload, { headers: { 'Authorization': localStorage.getItem(ACCESS_TOKEN_NAME) } })
             .then(function (response) {
-                if (response.status == 200 && response.data.idclaim !== "" && response.data.idclaim != undefined ) {
+                if (response.status == 200 && response.data.idClaim !== "" && response.data.idClaim != undefined && response.data.idClaim != 0) {
                     setOpen(true)
                     setSeverityAlert('success')
-                    setMessageAlert(`Reclamo creado con el identificador ${response.data.idclaim}`)   
+                    setMessageAlert(`Reclamo creado con el identificador ${response.data.idClaim}`)   
                     
                     refreshPage()                   
                 }               
@@ -200,12 +202,18 @@ function ClaimsTicket(props) {
                     setOpen(true)
                     setSeverityAlert('warning')
                     setMessageAlert(`${response.data.message}`)
+
+                    setAirline('')
+                    setFlightDate('')
                 }
             })
             .catch(function (error) {
                 setOpen(true)
                 setSeverityAlert('error')
                 setMessageAlert(`Ocurrio un error general. ${error}`)
+
+                setAirline('')
+                setFlightDate('')
             });
     }
 
@@ -233,7 +241,7 @@ function ClaimsTicket(props) {
                     if (response.data.message != "OK"){
                         setOpen(true)
                         setSeverityAlert('error')
-                        setMessageAlert("Ocurrio un error general.")
+                        setMessageAlert(`Ocurrio un error. ${response.data.message}`)
                     }
                 } else {
                     setOpen(true)
@@ -259,7 +267,6 @@ function ClaimsTicket(props) {
         axios.post('/api/Claim/Ticket/GetTicket', payload, { headers: { 'Authorization': localStorage.getItem(ACCESS_TOKEN_NAME) } })
             .then(function (response) {
                 console.log(response)
-
                 
                 setAirline(response.data.aerolinea)
                 setFlightDate(response.data.fechaVuelo)
@@ -267,7 +274,7 @@ function ClaimsTicket(props) {
                 if (response.status != 200) {
                     setOpen(true)
                     setSeverityAlert('warning')
-                    setMessageAlert(`${response.data.message}`)
+                    setMessageAlert(`${response.data.message}`)                   
                 }
             })
             .catch(function (error) {
@@ -307,6 +314,12 @@ function ClaimsTicket(props) {
                         APICallGetTicket(ticketId);
                     }
                 }}
+                callCancelar={() => {
+                    setAirline('')
+                    setFlightDate('')
+                }}
+
+
                 airline = {Airline}
                 flightDate = {FlightDate}
             />

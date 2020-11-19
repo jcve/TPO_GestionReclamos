@@ -115,6 +115,14 @@ namespace GestionReclamos.Controllers
                     responseNewLogin.StatusCode = (int)response.StatusCode;
                     responseNewLogin.Description = "SSO: " + error.Description;
                 }
+                else if ((int)response.StatusCode == 400)
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var error = JsonConvert.DeserializeObject<ResponseNewUser>(jsonString);
+
+                    responseNewLogin.StatusCode = (int)response.StatusCode;
+                    responseNewLogin.Description = "SSO: " + error.Description;
+                }
                 else if ((int)response.StatusCode == 401)
                 {
                     responseNewLogin.StatusCode = (int)response.StatusCode;

@@ -112,10 +112,10 @@ namespace GestionReclamos.Controllers
                 var usuario = await _context.Set<Usuario>().Where(u => u.Correo == reclamo.Client).FirstOrDefaultAsync();
                 if (usuario != null)
                 {
-                    int idestadoAnterior = _context.Set<ReclamoPasaje>().Where(e => e.Id == reclamo.Id).FirstOrDefault().IdEstado;
+                    int idestadoAnterior = _context.Set<ReclamoAuto>().Where(e => e.Id == reclamo.Id).FirstOrDefault().IdEstado;
                     int estadoAnterior = _context.Set<Estado>().Where(e => e.Id == idestadoAnterior).FirstOrDefault().Id;
                     int estadoNuevo = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
-                    if (estadoNuevo > estadoAnterior)
+                    if (estadoNuevo >= estadoAnterior)
                     {
                         claim.Descripcion = reclamo.Description;
                         claim.Patente = reclamo.Plate;
