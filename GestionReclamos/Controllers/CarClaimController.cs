@@ -33,6 +33,12 @@ namespace GestionReclamos.Controllers
         {
             try
             {
+                if (String.IsNullOrEmpty(reclamo.Airport) || String.IsNullOrEmpty(reclamo.Client) || String.IsNullOrEmpty(reclamo.Plate)
+                || String.IsNullOrEmpty(reclamo.Airport))
+                {
+                    return Ok(new ResponseClaimModify() { Message = "No pueden existir campos obligatorios como vacios o null." });
+                }
+
                 //verificar que exista el cliente
                 var usr = _context.Set<Usuario>().Where(u => u.Correo == reclamo.Client).FirstOrDefault();
                 int idCliente = 0;
@@ -90,6 +96,12 @@ namespace GestionReclamos.Controllers
         [HttpPost("Modify")]
         public async Task<IActionResult> ModifyClaim([FromBody] RequestModifyCarClaim reclamo) // Modificar reclamo
         {
+            if(String.IsNullOrEmpty(reclamo.Airport) || String.IsNullOrEmpty(reclamo.Client) || String.IsNullOrEmpty(reclamo.Plate)
+               ||  String.IsNullOrEmpty(reclamo.Airport))
+            {
+                return Ok(new ResponseClaimModify() { Message = "No pueden existir campos obligatorios como vacios o null." });
+            }
+
             //verificar que exista el reclamo
             var dbSetCarClaims = _context.Set<ReclamoAuto>();
             var claim = await dbSetCarClaims.FindAsync(reclamo.Id);
@@ -123,11 +135,11 @@ namespace GestionReclamos.Controllers
 
                             if (estadoNuevoDescripcion == "Cerrado")
                             {
-                                await MailService.EnviarMail("Gestión de Reclamos - Cerramos tu reclamo", reclamo.Client, $"El reclamo asociado a tu correo fue cerrado. Identificador {claim.Id} - Descripción: {claim.Descripcion}. Ante cualquier duda comunicate con nuestro centro de operadores.");
+                                await MailService.EnviarMail("Gestión de Reclamos - Cerramos tu reclamo", reclamo.Client, $"El reclamo asociado a tu correo fue cerrado. " + Environment.NewLine + $"Identificador {claim.Id} - Descripción: {claim.Descripcion}." + Environment.NewLine + " Ante cualquier duda comunicate con nuestro centro de operadores.");
                             }
                             else if (estadoNuevoDescripcion == "Resuelto")
                             {
-                                await MailService.EnviarMail("Gestión de Reclamos - Solucionamos tu reclamo", reclamo.Client, $"El reclamo asociado a tu correo fue solucionado. Identificador {claim.Id} - Descripción: {claim.Descripcion}. Ante cualquier duda comunicate con nuestro centro de operadores.");
+                                await MailService.EnviarMail("Gestión de Reclamos - Solucionamos tu reclamo", reclamo.Client, $"El reclamo asociado a tu correo fue solucionado. "+ Environment.NewLine +$"Identificador {claim.Id} - Descripción: {claim.Descripcion}."+ Environment.NewLine +" Ante cualquier duda comunicate con nuestro centro de operadores.");
                             }
                             
                             return Ok(new ResponseClaimModify() { IdClaim = reclamo.Id, Message = "OK" });
