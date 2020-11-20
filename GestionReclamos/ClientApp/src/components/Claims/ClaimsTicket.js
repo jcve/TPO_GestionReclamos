@@ -28,6 +28,10 @@ function ClaimsTicket(props) {
         estados: []
     })
 
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [postsPerPage, setPostsPerPage] = useState(5);
+
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(true);
 
@@ -157,8 +161,58 @@ function ClaimsTicket(props) {
         )
     }
 
+    /**Get current tickets */
+
+    const indexOfLastPost = currentPage * postsPerPage;
+
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+
+    /**Porcion a mostrar */
+
+    const currentPosts = state.claims.slice(indexOfFirstPost, indexOfLastPost);
+
+
+
+    const paginate = pagenumber => {
+
+        setCurrentPage(pagenumber);
+
+        //currentPosts = state.claims.slice(indexOfFirstPost,indexOfLastPost);
+    };
+
+
+
+    function Pagination() {
+
+        const pageNumbers = [];
+        for (let i = 1; i <= Math.ceil(state.claims.length / postsPerPage); i++) {
+
+            pageNumbers.push(i);
+
+        }
+
+        return (
+            <div style={{ float: "right" }}>
+                <nav>
+                    <ul className='pagination'>
+                        {pageNumbers.map(number => (
+                            <li key={number} className='page-item'>
+                                <a onClick={() => paginate(number)} className='page-link'>
+                                    {number}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                </nav>
+            </div>
+        )
+    };
+
+
+
     function ClaimList() {
-        const claims = state.claims;
+        //const claims = state.claims;
+        const claims = currentPosts;
         // console.log(`claims != undefined ${claims != undefined}`)
         if (claims != undefined) {
             const listclaims = claims.map((claim) =>
@@ -289,69 +343,88 @@ function ClaimsTicket(props) {
         window.location.reload(false);
     }
 
+
+
+
+
     return (
         <div>
-            <br />
             <Collapse in={open}>
                 <Alert severity={severityAlert}
-                       onClose={() => {setOpen(false)}}>
-                    {messageAlert}                
+                    onClose={() => { setOpen(false) }}>
+                    {messageAlert}
                 </Alert>
             </Collapse>
 
-            <FormDialogCreateClaimTicket 
-                type="submit"
-                className="btn btn-primary float-right"
-                title={`Crear un nuevo reclamo de Pasaje`} 
-                buttontext='Crear Reclamo Pasaje' 
-                content='Cargue los siguientes datos'
-                apicall = {(client,description,ticketId) => {
-                    APICall(client,description,ticketId);
-                }}
-                apicallgetticket = {(ticketId) => {
-                    if(ticketId!==0){
-                        console.log('claimticket' + ticketId)
-                        APICallGetTicket(ticketId);
-                    }
-                }}
-                callCancelar={() => {
-                    setAirline('')
-                    setFlightDate('')
-                }}
 
+            <br />
+            <div className="botones" style={{ clear: 'both' }}>
+                <button
 
-                airline = {Airline}
-                flightDate = {FlightDate}
-            />
+                    type="submit"
+                    className="btn btn-info"
+                    onClick={handleSubmitClick2}>
+                    Regresar a Inicio
+                            </button>
+                <button
+
+                    type="submit"
+                    className="btn btn-primary ml-2"
+
+                    onClick={GetClaimsTicket}>
+                    Recargar esta Lista
+                        </button>
+
+                <br></br>
+                <br></br>
+                <div>
+
+                <FormDialogCreateClaimTicket
+                        type="submit"
+                        className="btn btn-primary float-right"
+                        title={`Crear un nuevo reclamo de Pasaje`}
+                        buttontext='Crear Reclamo Pasaje'
+                        content='Cargue los siguientes datos'
+                        apicall={(client, description, ticketId) => {
+                            APICall(client, description, ticketId);
+                        }}
+                        apicallgetticket={(ticketId) => {
+                            if (ticketId !== 0) {
+                                console.log('claimticket' + ticketId)
+                                APICallGetTicket(ticketId);
+                            }
+                        }}
+                        callCancelar={() => {
+                            setAirline('')
+                            setFlightDate('')
+                        }}
+
+                        airline={Airline}
+                        flightDate={FlightDate}
+                    />
+                </div>
+                <div>
+                    <Pagination />
+                </div>
+            </div>
+
             <br />
 
-            <button
-                type="submit"
-                className="btn btn-info"
-                onClick={handleSubmitClick2}>
-                Regresar a Inicio
-                </button>
-            <button
-                type="submit"
-                className="btn btn-primary ml-1"
-                onClick={GetClaimsTicket}>
-                Recargar esta Lista
-                </button>
-            <br />
+            <br></br>
             <TableContainer component={Paper}>
                 <Table className={classes.table} aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell align="right">ID</TableCell>
-                            <TableCell align="right">Ticket ID</TableCell>
-                            <TableCell align="right">Fecha Creación</TableCell>
-                            <TableCell align="right">Correo asociado</TableCell>
-                            <TableCell align="right">Descripción</TableCell>
-                            <TableCell align="right">Fecha Vuelo</TableCell>
-                            <TableCell align="right">Aerolinea</TableCell>
-                            <TableCell align="right">Ultima modificación</TableCell>
-                            <TableCell align="right">Estado</TableCell>
-                            <TableCell align="right">Acciones</TableCell>
+                            <TableCell align="left">ID</TableCell>
+                            <TableCell align="center">Ticket</TableCell>
+                            <TableCell align="center">Fecha Creación</TableCell>
+                            <TableCell align="left">Correo asociado</TableCell>
+                            <TableCell align="left">Descripción</TableCell>
+                            <TableCell align="center">Fecha Vuelo</TableCell>
+                            <TableCell align="center">Aerolinea</TableCell>
+                            <TableCell align="center">Ultima modificación</TableCell>
+                            <TableCell align="left">Estado</TableCell>
+                            <TableCell align="center">Acciones</TableCell>
                         </TableRow>
                     </TableHead>
                     <ClaimList />

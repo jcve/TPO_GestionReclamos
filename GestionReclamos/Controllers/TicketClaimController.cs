@@ -372,8 +372,11 @@ namespace GestionReclamos.Controllers
                     }
                 ).ToListAsync();
 
-                return Ok(new ResponseTicketClaimAll() { TicketClaims = TicketClaims });
-            }
+            TicketClaims = (from c in TicketClaims
+                            select c).OrderBy(c => c.IdEstado).ToList();
+
+            return Ok(new ResponseTicketClaimAll() { TicketClaims = TicketClaims });
+        }
 
             catch(Exception e)
             {

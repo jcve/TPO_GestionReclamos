@@ -207,6 +207,9 @@ namespace GestionReclamos.Controllers
                 
                 .ToListAsync();
 
+            CarClaimsVM = (from c in CarClaimsVM
+                           select c).OrderBy(c => c.IdEstado).ToList();
+
             return Ok(new ResponseCarClaimAll() { CarClaims = CarClaimsVM });
         }
 

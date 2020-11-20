@@ -28,6 +28,10 @@ function ClaimsCar(props) {
         claims: [],
         estados: []
     })
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [postsPerPage, setPostsPerPage] = useState(5);
+
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(true);
 
@@ -132,7 +136,7 @@ function ClaimsCar(props) {
                 <TableCell>{row.value.aeropuerto}</TableCell>
                 <TableCell>{row.value.descripcion}</TableCell>
                 <TableCell>{new Date(row.value.fechaCreacion).toLocaleDateString('es-AR', options)}</TableCell>
-                <TableCell>{row.value.cliente}</TableCell>
+                <TableCell style={{ minWidth: '120px'}}>{row.value.cliente}</TableCell>
                 <TableCell>{row.value.marca}</TableCell>
                 <TableCell>{row.value.modelo}</TableCell>
                 <TableCell>{row.value.patente}</TableCell>
@@ -156,8 +160,57 @@ function ClaimsCar(props) {
         )
     }
 
+    /**Get current tickets */
+
+    const indexOfLastPost = currentPage * postsPerPage;
+
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+
+    /**Porcion a mostrar */
+
+    const currentPosts = state.claims.slice(indexOfFirstPost, indexOfLastPost);
+
+
+
+    const paginate = pagenumber => {
+
+        setCurrentPage(pagenumber);
+
+        //currentPosts = state.claims.slice(indexOfFirstPost,indexOfLastPost);
+    };
+
+
+
+    function Pagination() {
+
+        const pageNumbers = [];
+        for (let i = 1; i <= Math.ceil(state.claims.length / postsPerPage); i++) {
+
+            pageNumbers.push(i);
+
+        }
+
+        return (
+            <div style={{ float: "right" }}>
+                <nav>
+                    <ul className='pagination'>
+                        {pageNumbers.map(number => (
+                            <li key={number} className='page-item'>
+                                <a onClick={() => paginate(number)} className='page-link'>
+                                    {number}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                </nav>
+            </div>
+        )
+    };
+
+
     function ClaimList() {
-        const claims = state.claims;
+        //const claims = state.claims;
+        const claims = currentPosts;
         // console.log(`claims != undefined ${claims != undefined}`)
         if (claims != undefined) {
             const listclaims = claims.map((claim) =>
@@ -278,13 +331,35 @@ function ClaimsCar(props) {
 
     return (
         <div>
-            <br />
             <Collapse in={open}>
                 <Alert severity={severityAlert}
                        onClose={() => {setOpen(false)}}>
                     {messageAlert}                
                 </Alert>
             </Collapse>
+
+            <br />
+            <div className="botones" style={{ clear: 'both' }}>
+                <button
+
+                    type="submit"
+                    className="btn btn-info"
+                    onClick={handleSubmitClick2}>
+                    Regresar a Inicio
+                            </button>
+                <button
+
+                    type="submit"
+                    className="btn btn-primary ml-2"
+
+                    onClick={GetClaimsCar}>
+                    Recargar esta Lista
+                        </button>
+
+                <br></br>
+                <br></br>
+                <div>
+
 
             <FormDialogCreateClaimCar 
                 type="submit"
@@ -296,37 +371,30 @@ function ClaimsCar(props) {
                     APICall(client,description,plate,model,brand,airport);
                 }}
                 />
+                </div>
+                <div>
+                    <Pagination />
+                </div>
+            </div>
+
             <br />
 
-            <button
-                type="submit"
-                className="btn btn-info"
-                onClick={handleSubmitClick2}>
-                Regresar a Inicio
-                </button>
-            <button
-                type="submit"
-                className="btn btn-primary ml-1"
-                onClick={GetClaimsCar}>
-                Recargar esta Lista
-                </button>
-            <br />
-
+            <br></br>
             <TableContainer component={Paper}>
                 <Table className={classes.table} aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell align="right">ID</TableCell>
-                            <TableCell align="right">Aeropuerto</TableCell>
-                            <TableCell align="right">Descripción</TableCell>
-                            <TableCell align="right">Fecha creación</TableCell>
-                            <TableCell align="right">Correo asociado</TableCell>
-                            <TableCell align="right">Marca</TableCell>
-                            <TableCell align="right">Modelo</TableCell>
-                            <TableCell align="right">Patente</TableCell>
-                            <TableCell align="right">Ultima modificación</TableCell>
-                            <TableCell align="right">Estado</TableCell>
-                            <TableCell align="right">Acciones</TableCell>
+                            <TableCell align="left">ID</TableCell>
+                            <TableCell align="left">Aeropuerto</TableCell>
+                            <TableCell align="left">Descripción</TableCell>
+                            <TableCell align="left" style={{ minWidth: '120px' }}>Fecha creación</TableCell>
+                            <TableCell align="left">Correo asociado</TableCell>
+                            <TableCell align="left">Marca</TableCell>
+                            <TableCell align="left">Modelo</TableCell>
+                            <TableCell align="left">Patente</TableCell>
+                            <TableCell align="center">Ultima modificación</TableCell>
+                            <TableCell align="left">Estado</TableCell>
+                            <TableCell align="center">Acciones</TableCell>
                         </TableRow>
                     </TableHead>
                     <ClaimList />
