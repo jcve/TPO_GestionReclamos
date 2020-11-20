@@ -43,6 +43,11 @@ namespace GestionReclamos.Controllers
         {
             try
             {
+                if (String.IsNullOrEmpty(claim.Client) || claim.Ticket <= 0)
+                {
+                    return Ok(new ResponseClaimCreated() { Message = "No pueden existir campos obligatorios como vacios o null." });
+                }
+
                 var ticket = _context.Set<ReclamoPasaje>().Where(u => u.Ticket == claim.Ticket).FirstOrDefault();
                 if (ticket == null)
                 {
@@ -130,88 +135,96 @@ namespace GestionReclamos.Controllers
         [HttpPost("Modify")]
         public async Task<IActionResult> ModifyClaim([FromBody] RequestModifyTicketClaim reclamo) // Modificar reclamo
         {
-            //verificar que exista el reclamo
-            var dbSetTicketClaims = _context.Set<ReclamoPasaje>();
-            var claim = await dbSetTicketClaims.FindAsync(reclamo.Id);
-            //modificar reclamo
-            if (claim != null)
+            try
             {
-                var usuario = await _context.Set<Usuario>().Where(u => u.Correo == reclamo.Client).FirstOrDefaultAsync();
-                if (usuario != null)
+                //verificar que exista el reclamo
+                var dbSetTicketClaims = _context.Set<ReclamoPasaje>();
+                var claim = await dbSetTicketClaims.FindAsync(reclamo.Id);
+                //modificar reclamo
+                if (claim != null)
                 {
-                    int idestadoAnterior = _context.Set<ReclamoPasaje>().Where(e => e.Id == reclamo.Id).FirstOrDefault().IdEstado;
-                    int estadoAnterior = _context.Set<Estado>().Where(e => e.Id == idestadoAnterior).FirstOrDefault().Id;
-                    int estadoNuevo = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
-
-                    if (estadoNuevo >= estadoAnterior)
+                    var usuario = await _context.Set<Usuario>().Where(u => u.Correo == reclamo.Client).FirstOrDefaultAsync();
+                    if (usuario != null)
                     {
-                        claim.Descripcion = reclamo.Description;
-                        claim.IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
-                        claim.UltimaModificacion = DateTime.Now;
+                        int idestadoAnterior = _context.Set<ReclamoPasaje>().Where(e => e.Id == reclamo.Id).FirstOrDefault().IdEstado;
+                        int estadoAnterior = _context.Set<Estado>().Where(e => e.Id == idestadoAnterior).FirstOrDefault().Id;
+                        int estadoNuevo = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
 
-                        dbSetTicketClaims.Update(claim);
-
-                        var cantRegistrosInsertados = await _context.SaveChangesAsync<ReclamoPasaje>();
-
-                        if (cantRegistrosInsertados.Equals(1))
+                        if (estadoNuevo >= estadoAnterior)
                         {
-                            string estadoNuevoDescripcion = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Descripcion;
+                            claim.Descripcion = reclamo.Description;
+                            claim.IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
+                            claim.UltimaModificacion = DateTime.Now;
 
-                            if (estadoNuevoDescripcion == "Cerrado")
-                            {
-                                await MailService.EnviarMail("Gestión de Reclamos - Cerramos tu reclamo", reclamo.Client, $"El reclamo asociado a tu correo fue cerrado. Identificador {claim.Id} - Descripción: {claim.Descripcion}. Ante cualquier duda comunicate con nuestro centro de operadores.");
-                            }
-                            else if (estadoNuevoDescripcion == "Resuelto")
-                            {
-                                await MailService.EnviarMail("Gestión de Reclamos - Solucionamos tu reclamo", reclamo.Client, $"El reclamo asociado a tu correo fue solucionado. Identificador {claim.Id} - Descripción: {claim.Descripcion}. Ante cualquier duda comunicate con nuestro centro de operadores.");
-                            }
+                            dbSetTicketClaims.Update(claim);
 
-                            return Ok(new ResponseClaimModify() { IdClaim = reclamo.Id, Message = "OK" });
+                            var cantRegistrosInsertados = await _context.SaveChangesAsync<ReclamoPasaje>();
+
+                            if (cantRegistrosInsertados.Equals(1))
+                            {
+                                string estadoNuevoDescripcion = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Descripcion;
+
+                                if (estadoNuevoDescripcion == "Cerrado")
+                                {
+                                    await MailService.EnviarMail("Gestión de Reclamos - Cerramos tu reclamo", reclamo.Client, $"El reclamo asociado a tu correo fue cerrado. Identificador {claim.Id} - Descripción: {claim.Descripcion}. Ante cualquier duda comunicate con nuestro centro de operadores.");
+                                }
+                                else if (estadoNuevoDescripcion == "Resuelto")
+                                {
+                                    await MailService.EnviarMail("Gestión de Reclamos - Solucionamos tu reclamo", reclamo.Client, $"El reclamo asociado a tu correo fue solucionado. Identificador {claim.Id} - Descripción: {claim.Descripcion}. Ante cualquier duda comunicate con nuestro centro de operadores.");
+                                }
+
+                                return Ok(new ResponseClaimModify() { IdClaim = reclamo.Id, Message = "OK" });
+                            }
                         }
+                        else
+                        {
+                            return Ok(new ResponseClaimModify() { Message = "No se puede cambiar a un estado inferior." });
+                        }
+
                     }
+                    //crear el usuarios y dsp agregar
                     else
                     {
-                        return Ok(new ResponseClaimModify() { Message = "No se puede cambiar a un estado inferior." });
-                    }
+                        int idestadoAnterior = _context.Set<ReclamoPasaje>().Where(e => e.Id == reclamo.Id).FirstOrDefault().IdEstado;
+                        int estadoAnterior = _context.Set<Estado>().Where(e => e.Id == idestadoAnterior).FirstOrDefault().Id;
+                        int estadoNuevo = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
 
-                }
-                //crear el usuarios y dsp agregar
-                else 
-                {
-                    int idestadoAnterior = _context.Set<ReclamoPasaje>().Where(e => e.Id == reclamo.Id).FirstOrDefault().IdEstado;
-                    int estadoAnterior = _context.Set<Estado>().Where(e => e.Id == idestadoAnterior).FirstOrDefault().Id;
-                    int estadoNuevo = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
-
-                    if (estadoNuevo > estadoAnterior)
-                    {
-                        var nuevoUsr = new Usuario { Correo = reclamo.Client };
-                        _context.Set<Usuario>().Add(nuevoUsr);
-                        await _context.SaveChangesAsync<Usuario>();
-                        var idCliente = nuevoUsr.Id;
-
-                        claim.Descripcion = reclamo.Description;
-                        claim.IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
-                        claim.UltimaModificacion = DateTime.Now;
-
-                        dbSetTicketClaims.Update(claim);
-
-                        var cantRegistrosInsertados = await _context.SaveChangesAsync<ReclamoPasaje>();
-
-                        if (cantRegistrosInsertados.Equals(1))
+                        if (estadoNuevo > estadoAnterior)
                         {
+                            var nuevoUsr = new Usuario { Correo = reclamo.Client };
+                            _context.Set<Usuario>().Add(nuevoUsr);
+                            await _context.SaveChangesAsync<Usuario>();
+                            var idCliente = nuevoUsr.Id;
 
-                            return Ok(new ResponseClaimModify() { IdClaim = reclamo.Id, Message = "OK" });
+                            claim.Descripcion = reclamo.Description;
+                            claim.IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
+                            claim.UltimaModificacion = DateTime.Now;
+
+                            dbSetTicketClaims.Update(claim);
+
+                            var cantRegistrosInsertados = await _context.SaveChangesAsync<ReclamoPasaje>();
+
+                            if (cantRegistrosInsertados.Equals(1))
+                            {
+
+                                return Ok(new ResponseClaimModify() { IdClaim = reclamo.Id, Message = "OK" });
+                            }
                         }
-                    }
-                    else
-                    {
-                        return Ok(new ResponseClaimModify() { Message = "No se puede cambiar a un estado inferior." });
-                    }
+                        else
+                        {
+                            return Ok(new ResponseClaimModify() { Message = "No se puede cambiar a un estado inferior." });
+                        }
 
+                    }
                 }
+
+                return Ok(new ResponseClaimModify() { Message = "ERROR" });
             }
 
-            return Ok(new ResponseClaimModify() { Message = "ERROR" });
+            catch (Exception e)
+            {
+                return Ok(new ResponseClaimModify() { Message = "ERROR" });
+            }
         }
 
         [ProducesResponseType(typeof(ResponseClaimCreated), 200)]
@@ -317,7 +330,9 @@ namespace GestionReclamos.Controllers
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAllClaims() // Obtener reclamos
         {
-            var TicketClaims = await _context.Set<ReclamoPasaje>()
+            try
+            {
+                var TicketClaims = await _context.Set<ReclamoPasaje>()
               .Join(
                     _context.Set<Estado>(),
                     reclamoPasaje => reclamoPasaje.IdEstado,
@@ -357,7 +372,13 @@ namespace GestionReclamos.Controllers
                     }
                 ).ToListAsync();
 
-            return Ok(new ResponseTicketClaimAll() { TicketClaims = TicketClaims });
+                return Ok(new ResponseTicketClaimAll() { TicketClaims = TicketClaims });
+            }
+
+            catch(Exception e)
+            {
+                return Ok(new ResponseTicketClaimAll() { });
+            }
         }
 
         [ProducesResponseType(typeof(ResponseReclamoPasaje), 200)]

@@ -33,7 +33,7 @@ namespace GestionReclamos.Controllers
         {
             try
             {
-                if (String.IsNullOrEmpty(reclamo.Airport) || String.IsNullOrEmpty(reclamo.Client) || String.IsNullOrEmpty(reclamo.Plate)
+                if (String.IsNullOrEmpty(reclamo.Client) || String.IsNullOrEmpty(reclamo.Client) || String.IsNullOrEmpty(reclamo.Plate)
                 || String.IsNullOrEmpty(reclamo.Airport))
                 {
                     return Ok(new ResponseClaimModify() { Message = "No pueden existir campos obligatorios como vacios o null." });
@@ -96,7 +96,7 @@ namespace GestionReclamos.Controllers
         [HttpPost("Modify")]
         public async Task<IActionResult> ModifyClaim([FromBody] RequestModifyCarClaim reclamo) // Modificar reclamo
         {
-            if(String.IsNullOrEmpty(reclamo.Airport) || String.IsNullOrEmpty(reclamo.Client) || String.IsNullOrEmpty(reclamo.Plate)
+            if(String.IsNullOrEmpty(reclamo.Client) || String.IsNullOrEmpty(reclamo.Client) || String.IsNullOrEmpty(reclamo.Plate)
                ||  String.IsNullOrEmpty(reclamo.Airport))
             {
                 return Ok(new ResponseClaimModify() { Message = "No pueden existir campos obligatorios como vacios o null." });
@@ -213,7 +213,7 @@ namespace GestionReclamos.Controllers
         [ProducesResponseType(typeof(ResponseCarClaimAll), 200)]
         [ProducesResponseType(typeof(string), 401)]
         [HttpGet("Get/{id}")]
-        public async Task<IActionResult> GetClaim(int id) // Obtener reclamo - INTERNO/EXTERNO
+        public async Task<IActionResult> GetClaim(int id) // Obtener reclamo
         {
             try
             {
