@@ -101,7 +101,8 @@ namespace GestionReclamos.Controllers
 
                         if (cantRegistrosInsertados.Equals(1)) // Se pudo insertar el registro
                         {
-                            await MailService.EnviarMail("Gestión de Reclamos - Se creo un reclamo!", claim.Client, $"Un operador creo un reclamo asociado a tu correo con el identificador: {nuevoReclamo.Id} - Descripción: {nuevoReclamo.Descripcion}. Ante cualquier duda comunicate con nuestro centro de operadores.");
+                            await MailService.EnviarMail("Gestión de Reclamos - Creamos tu reclamo", claim.Client, $"Un operador creo un reclamo asociado a tu correo.<br> - N° Reclamo: {nuevoReclamo.Id}<br>- Descripción: {nuevoReclamo.Descripcion}<br>- N° Ticket: {nuevoReclamo.Ticket}<br>- Aerolinea: {nuevoReclamo.Aerolinea}<br>- Fecha Vuelo: {nuevoReclamo.FechaVuelo}<br>Ante cualquier consulta comunicate con nuestro centro de operadores las 24Hs los 365 días.<br>Atención al cliente (Callcenter): 0800-555-3569");
+
                             return Ok(new ResponseClaimCreated() { IdClaim = nuevoReclamo.Id, Message = $"Se creo correctamente el reclamo para el ticket {flight.Ticket}" });
                         }
 
@@ -166,11 +167,11 @@ namespace GestionReclamos.Controllers
 
                                 if (estadoNuevoDescripcion == "Cerrado")
                                 {
-                                    await MailService.EnviarMail("Gestión de Reclamos - Cerramos tu reclamo", reclamo.Client, $"El reclamo asociado a tu correo fue cerrado. Identificador {claim.Id} - Descripción: {claim.Descripcion}. Ante cualquier duda comunicate con nuestro centro de operadores.");
+                                    await MailService.EnviarMail("Gestión de Reclamos - Tu reclamo fue cerrado", reclamo.Client, $"El reclamo asociado a tu correo fue cerrado!<br> - N° Reclamo: {reclamo.Id}<br>- Descripción: {reclamo.Description}<br>- N° Ticket: {reclamo.Ticket}<br>- Aerolinea: {claim.Aerolinea}<br>- Fecha Vuelo: {claim.FechaVuelo}<br>Ante cualquier consulta comunicate con nuestro centro de operadores las 24Hs los 365 días.<br>Atención al cliente (Callcenter): 0800-555-3569");
                                 }
                                 else if (estadoNuevoDescripcion == "Resuelto")
                                 {
-                                    await MailService.EnviarMail("Gestión de Reclamos - Solucionamos tu reclamo", reclamo.Client, $"El reclamo asociado a tu correo fue solucionado. Identificador {claim.Id} - Descripción: {claim.Descripcion}. Ante cualquier duda comunicate con nuestro centro de operadores.");
+                                    await MailService.EnviarMail("Gestión de Reclamos - Tu reclamo fue resuelto", reclamo.Client, $"El reclamo asociado a tu correo fue resuelto!<br> - N° Reclamo: {reclamo.Id}<br>- Descripción: {reclamo.Description}<br>- N° Ticket: {reclamo.Ticket}<br>- Aerolinea: {claim.Aerolinea}<br>- Fecha Vuelo: {claim.FechaVuelo}<br>Ante cualquier consulta comunicate con nuestro centro de operadores las 24Hs los 365 días.<br>Atención al cliente (Callcenter): 0800-555-3569");
                                 }
 
                                 return Ok(new ResponseClaimModify() { IdClaim = reclamo.Id, Message = "OK" });
@@ -291,7 +292,7 @@ namespace GestionReclamos.Controllers
 
                             if (cantRegistrosInsertados.Equals(1)) // Se pudo insertar el registro
                             {
-                                await MailService.EnviarMail("Gestión de Reclamos - Recibimos un reclamo!", claim.Client, $"Recibimos un reclamo asociado a tu correo con el identificador: {nuevoReclamo.Id} - Descripción: {nuevoReclamo.Descripcion}. Ante cualquier duda comunicate con nuestro centro de operadores.");
+                                await MailService.EnviarMail("Gestión de Reclamos - Recibimos tu reclamo", claim.Client, $"Recibimos un reclamo asociado a tu correo.<br> - N° Reclamo: {nuevoReclamo.Id}<br>- Descripción: {nuevoReclamo.Descripcion}<br>- N° Ticket: {nuevoReclamo.Ticket}<br>- Aerolinea: {nuevoReclamo.Aerolinea}<br>- Fecha Vuelo: {nuevoReclamo.FechaVuelo}<br>Ante cualquier consulta comunicate con nuestro centro de operadores las 24Hs los 365 días.<br>Atención al cliente (Callcenter): 0800-555-3569");
                                 return Ok(new ResponseClaimCreated() { IdClaim = nuevoReclamo.Id, Message = $"Se creo correctamente el reclamo para el ticket {flight.Ticket}" });
                             }
 
