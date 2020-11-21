@@ -26,7 +26,9 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 function ClaimsCar(props) {
     const [state, setState] = useState({
         claims: [],
-        estados: []
+        estados: [],
+        aeropuertos:[],
+        informacion:{}
     })
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -49,6 +51,8 @@ function ClaimsCar(props) {
 
     useEffect(() => {
         GetStates()
+        GetInfo()
+        GetAirports()
         GetClaimsCar()
     }, [])
 
@@ -117,6 +121,52 @@ function ClaimsCar(props) {
                     }
                     if (response.data.length == 0)
                         props.showError("No existen estados");
+                } else {
+                    props.showError("Ocurrio un error en la comunicacion, intente nuevamente.");
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+    const GetAirports = () => {
+        axios.get('/api/Claim/Car/Airports', { headers: { 'Authorization': localStorage.getItem(ACCESS_TOKEN_NAME) } })
+            .then(function (response) {
+                if (response.status == 200) {
+                    console.log(response.data)
+                    if (response.data.length > 0) {
+                        setState((prevState => ({
+                            ...prevState,
+                            aeropuertos: response.data
+                        })))
+                        // window.alert(`Reclamo creado con el identificador ${response.data.idClaim}`);
+                    }
+                    if (response.data.length == 0)
+                        props.showError("No existen aeropuertos");
+                } else {
+                    props.showError("Ocurrio un error en la comunicacion, intente nuevamente.");
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+    const GetInfo = () => {
+        axios.get('/api/Claim/Car/Information', { headers: { 'Authorization': localStorage.getItem(ACCESS_TOKEN_NAME) } })
+            .then(function (response) {
+                if (response.status == 200) {
+                    console.log(response.data)
+                    if (!isEmpty(response.data)) {
+                        setState((prevState => ({
+                            ...prevState,
+                            informacion: response.data
+                        })))
+                        // window.alert(`Reclamo creado con el identificador ${response.data.idClaim}`);
+                    }
+                    if (response.data.length == 0)
+                        props.showError("No existen informacion");
                 } else {
                     props.showError("Ocurrio un error en la comunicacion, intente nuevamente.");
                 }
@@ -233,6 +283,16 @@ function ClaimsCar(props) {
         }
     }
 
+
+    function isEmpty(obj) {
+        for(var prop in obj) {
+            if(obj.hasOwnProperty(prop))
+                return false;
+        }
+    
+        return true;
+    }
+
     const CreateClaimCarDialog = () => {
         console.log('entra')
         return (
@@ -339,6 +399,7 @@ function ClaimsCar(props) {
             </Collapse>
 
             <br />
+
             <div className="botones" style={{ clear: 'both' }}>
                 <button
 
@@ -358,8 +419,7 @@ function ClaimsCar(props) {
 
                 <br></br>
                 <br></br>
-                <div>
-
+                <div>            
 
             <FormDialogCreateClaimCar 
                 type="submit"
@@ -370,6 +430,8 @@ function ClaimsCar(props) {
                 apicall = {(client,description,plate,model,brand,airport) => {
                     APICall(client,description,plate,model,brand,airport);
                 }}
+                aeropuertos = {state.aeropuertos}
+
                 />
                 </div>
                 <div>

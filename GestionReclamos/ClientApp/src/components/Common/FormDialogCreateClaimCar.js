@@ -56,8 +56,10 @@ export default function FormDialogCreateClaimCar(props) {
   };
 
   useEffect(() => {        
-
-  }, [])
+    console.log(props.aeropuertos[0])
+    setAirport(props.aeropuertos[0])
+    console.log('no se')
+  }, [props.aeropuertos])
 
   function cadaCampoTieneDatos(){
     // let arr = [client,description,plate,model,brand,airport]
@@ -135,12 +137,7 @@ export default function FormDialogCreateClaimCar(props) {
         props.apicall(client,description,plate,model,brand,airport)
         
         //limpiar los datos
-        setClient('')
-        setDescription('')
-        setPlate('')
-        setModel('')
-        setBrand('')
-        setAirport('')
+        limpiarCampos()       
 
         //cerrar el dialogo
         handleClose()
@@ -148,6 +145,23 @@ export default function FormDialogCreateClaimCar(props) {
       else{
         console.log('no estan todos los datos')
       }
+  }
+
+  const limpiarCampos = () =>{
+    setClient('')
+    setDescription('')
+    setPlate('')
+    setModel('')
+    setBrand('')
+    //setAirport('')
+
+    setErrorInputClient(false);
+    setErrorInputDescription(false);
+    setErrorInputPlate(false);
+    setErrorInputModel(false);
+    setErrorInputBrand(false);
+    setErrorInputAirport(false);
+
   }
 
   const handleChange = (event) => {
@@ -166,7 +180,7 @@ export default function FormDialogCreateClaimCar(props) {
           <DialogContentText>
             {props.content}
           </DialogContentText>
-            <FormControl style={{width:'500px'}}>
+            <FormControl style={{width:'500px'}}>                             
               <TextField
                 autoFocus
                 margin="dense"
@@ -181,7 +195,6 @@ export default function FormDialogCreateClaimCar(props) {
                 onChange={(e)=> setClient(e.target.value)}
               />
               <TextField
-                autoFocus
                 margin="dense"
                 id="description"
                 label="Descripcion del reclamo"
@@ -194,7 +207,6 @@ export default function FormDialogCreateClaimCar(props) {
                 onChange={(e)=> setDescription(e.target.value)}
               />
               <TextField
-                autoFocus
                 margin="dense"
                 id="plate"
                 label="Patente"
@@ -207,7 +219,6 @@ export default function FormDialogCreateClaimCar(props) {
                 onChange={(e)=> setPlate(e.target.value)}
               />
               <TextField
-                autoFocus
                 margin="dense"
                 id="model"
                 label="Modelo del auto"
@@ -220,7 +231,6 @@ export default function FormDialogCreateClaimCar(props) {
                 onChange={(e)=> setModel(e.target.value)}
               />
               <TextField
-                autoFocus
                 margin="dense"
                 id="brand"
                 label="Marca del auto"
@@ -232,8 +242,7 @@ export default function FormDialogCreateClaimCar(props) {
                 value={brand}
                 onChange={(e)=> setBrand(e.target.value)}
               />
-              <TextField
-                autoFocus
+              <Select 
                 margin="dense"
                 id="airport"
                 label="Aeropuerto asociado"
@@ -243,12 +252,21 @@ export default function FormDialogCreateClaimCar(props) {
                 type="text"
                 fullWidth
                 value={airport}
-                onChange={(e)=> setAirport(e.target.value)}
-              />               
+                onChange={(e)=> setAirport(e.target.value)}                
+                >
+                {props.aeropuertos.map((aeropuerto) => (
+                    <MenuItem key={aeropuerto} value={aeropuerto}>
+                    {aeropuerto}
+                    </MenuItem>
+                ))}
+              </Select>                                       
             </FormControl>            
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={() =>{
+            handleClose(); 
+            limpiarCampos();
+          }} color="primary">
             Cancelar
           </Button>
           <Button onClick={() => crearReclamo()} color="primary">
