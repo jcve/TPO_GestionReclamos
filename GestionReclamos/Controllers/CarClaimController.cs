@@ -6,9 +6,11 @@ using GestionReclamos.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,6 +22,9 @@ namespace GestionReclamos.Controllers
     {
         private readonly ILogger<CarClaimController> _logger;
         private readonly IGestionReclamosDbContext _context;
+        private readonly string itinerarios_url = "http://itinerarios-back.herokuapp.com";
+        private readonly HttpClient httpClient = new HttpClient();
+
         public CarClaimController(ILogger<CarClaimController> logger, IGestionReclamosDbContext context)
         {
             _logger = logger;
@@ -88,6 +93,34 @@ namespace GestionReclamos.Controllers
             {
                 var t = ex;
                 throw;
+            }
+        }
+
+        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(string), 401)]
+        [HttpGet("Airports")]
+        public async Task<IActionResult> GetAllAirports()
+        {
+            try
+            {
+                var response = await httpClient.GetAsync(itinerarios_url + "/itinerarios/aeropuertos");
+
+                if ((int)response.StatusCode == 200) {
+
+                    var airports = JsonConvert.DeserializeObject<List<Airports>>(await response.Content.ReadAsStringAsync());
+
+                    if(airports != null)
+                    {
+                        return Ok(airports.Select(c => c.Nombre).ToList());
+                    }
+                }
+
+                return null;
+            }
+
+            catch (Exception e)
+            {
+                return null;
             }
         }
 
@@ -213,29 +246,29 @@ namespace GestionReclamos.Controllers
             return Ok(new ResponseCarClaimAll() { CarClaims = CarClaimsVM });
         }
 
-        [ProducesResponseType(typeof(ResponseCarClaimAll), 200)]
-        [ProducesResponseType(typeof(string), 401)]
-        [HttpGet("Get/{id}")]
-        public async Task<IActionResult> GetClaim(int id) // Obtener reclamo
-        {
-            try
-            {
-                var claim = await _context.Set<ReclamoAuto>().FindAsync(id);
-                var res = new ResponseCarClaimAll();
-                if (claim != null)
-                {
-                    res.CarClaims.Add(new ReclamoAutoVM()
-                    {
-                        //TODO corregir
-                        Estado = claim.IdEstado.ToString()
-                    });
-                }
-                return Ok(res);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
+        //[ProducesResponseType(typeof(ResponseCarClaimAll), 200)]
+        //[ProducesResponseType(typeof(string), 401)]
+        //[HttpGet("Get/{id}")]
+        //public async Task<IActionResult> GetClaim(int id) // Obtener reclamo
+        //{
+        //    try
+        //    {
+        //        var claim = await _context.Set<ReclamoAuto>().FindAsync(id);
+        //        var res = new ResponseCarClaimAll();
+        //        if (claim != null)
+        //        {
+        //            res.CarClaims.Add(new ReclamoAutoVM()
+        //            {
+        //                //TODO corregir
+        //                Estado = claim.IdEstado.ToString()
+        //            });
+        //        }
+        //        return Ok(res);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw;
+        //    }
+        //}
     }
 }
