@@ -326,6 +326,33 @@ namespace GestionReclamos.Controllers
             }
         }
 
+
+        [ProducesResponseType(typeof(Info), 200)]
+        [ProducesResponseType(typeof(string), 401)]
+        [HttpGet("Information")]
+        public async Task<IActionResult> GetInfo()
+        {
+            try
+            {
+                var autos = _context.Set<ReclamoPasaje>().ToList();
+
+                var informacion = new Info();
+
+                informacion.Cantidad = autos.Count();
+                informacion.CantidadNuevo = autos.Where(c => c.IdEstado == 1).Count();
+                informacion.CantidadEnProgreso = autos.Where(c => c.IdEstado == 11).Count();
+                informacion.CantidadResuelto = autos.Where(c => c.IdEstado == 21).Count();
+                informacion.CantidadCerrado = autos.Where(c => c.IdEstado == 31).Count();
+
+                return Ok(informacion);
+            }
+
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
         [ProducesResponseType(typeof(ResponseTicketClaimAll), 200)]
         [ProducesResponseType(typeof(string), 401)]
         [HttpGet("GetAll")]
