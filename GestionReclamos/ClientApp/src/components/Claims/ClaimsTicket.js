@@ -21,6 +21,24 @@ import Collapse from '@material-ui/core/Collapse';
 import FormDialogTicket from '../Common/FormDialogTicket';
 
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Controls from "../controls/Controls";
+import useTable from "../Claims/UseTable";
+
+
+const cabeceras = [
+    { id: 'id', label: 'Reclamo' },
+    { id: 'ticket', label: 'Ticket' },
+    { id: 'fechaCreacion', label: 'Fecha Creación', disableSorting: 'true' },
+    { id: 'correo', label: 'Correo Asociado', disableSorting: 'true' },
+    { id: 'descripcion', label: 'Descripción', disableSorting: 'true' },
+    { id: 'fechaVuel', label: 'Fecha Vuelo', disableSorting: 'true' },
+    { id: 'aerolinea', label: 'Aerolínea' },
+    { id: 'ultimaModificacion', label: 'Última Modificación', disableSorting: 'true' },
+    { id: 'estado', label: 'Estado' },
+    { id: 'acciones', label: 'Acciones', disableSorting: 'true' },
+
+]
+
 
 function ClaimsTicket(props) {
     const [state, setState] = useState({
@@ -41,14 +59,36 @@ function ClaimsTicket(props) {
     const [Airline, setAirline] = useState('');
     const [FlightDate, setFlightDate] = useState('');
 
-    const useStyles = makeStyles({
+    const [filterFunct, setFilterFunct] = useState({ fn: items => { return items; } })
+
+    const {
+        TblContainer,
+        TblHeader,
+        TblPagination,
+        reclamosFiltrados,
+    } = useTable(state.claims, cabeceras, filterFunct);
+
+/*    const useStyles = makeStyles({
         table: {
             minWidth: 650,
         },
 
-    });
-
-    const classes = useStyles();
+    });*/
+    const useStylesOne = makeStyles(theme => ({
+        pageContent: {
+            margin: theme.spacing(0),
+            padding: theme.spacing(0)
+        },
+        searchInput: {
+            width: '20%',
+            float: 'left',
+            left: '30px',
+            position: 'absolut',
+            margin: theme.spacing(1),
+        }
+    }));
+    /*const classes = useStyles();*/
+    const classesOne = useStylesOne();
 
     useEffect(() => {
         GetStates()
@@ -343,8 +383,27 @@ function ClaimsTicket(props) {
         window.location.reload(false);
     }
 
-
-
+    const handleSearch = e => {
+        let target = e.target;
+        setFilterFunct({
+            fn: items => {
+                if (target.value == "")
+                    return items;
+                else
+                    return items.filter(x => x.cliente.toLowerCase().includes(target.value))
+            }
+        })
+    }
+    const handleSearchID = e => {
+        let target = e.target;
+        setFilterFunct({
+            fn: items => {
+                if (target.value == "") return items;
+                else
+                    return items.filter(y => (y.id.toString().includes(target.value.toString()) || y.ticket.toString().includes(target.value.toString())))
+            }
+        })
+    }
 
 
     return (
@@ -404,14 +463,26 @@ function ClaimsTicket(props) {
                     />
                 </div>
                 <div>
-                    <Pagination />
+                    <toolbar>
+                        <Controls.Input
+                            label="Buscar Mail de Cliente"
+                            className={classesOne.searchInput}
+                            onChange={handleSearch}
+                        />
+                    </toolbar>
+                    <toolbar>
+                        <Controls.Input
+                            label="Buscar por ID"
+                            className={classesOne.searchInput}
+                            onChange={handleSearchID}
+                        />
+                    </toolbar>
+
                 </div>
             </div>
 
-            <br />
 
-            <br></br>
-            <TableContainer component={Paper}>
+            {/*          <TableContainer component={Paper}>
                 <Table className={classes.table} aria-label="simple table">
                     <TableHead>
                         <TableRow>
@@ -429,10 +500,50 @@ function ClaimsTicket(props) {
                     </TableHead>
                     <ClaimList />
                 </Table>
-            </TableContainer>
-
+            </TableContainer>*/}
+            <div></div>
+            <div >
+                <TblPagination label="Cant.Reclamos" />
+                <TblContainer >
+ 
+                    <TblHeader />
+                    <TableBody>
+                        {
+                            reclamosFiltrados().map(item =>
+                                (
+                                    <TableRow key={item.id}>
+                                        <TableCell>{item.id}</TableCell>
+                                        <TableCell>{item.ticket}</TableCell>
+                                        <TableCell>{item.fechaCreacion}</TableCell>
+                                        <TableCell>{item.cliente}</TableCell>
+                                        <TableCell>{item.descripcion}</TableCell>
+                                        <TableCell>{item.fechaVuelo}</TableCell>
+                                        <TableCell>{item.aerolinea}</TableCell>
+                                        <TableCell>{item.ultimaModificacion}</TableCell>
+                                        <TableCell>{item.estado}</TableCell>
+                                        <TableCell>
+                                            <FormDialogTicket claim={item}
+                                                estados={state.estados}
+                                                title={`Reclamo con identificador: ${item.id}`}
+                                                buttontext='Modificar'
+                                                content='Modifique los campos necesarios'
+                                                apicallstate={(id, client, description, flightDate, airline, nuevoEstado) => {
+                                                    APICallState(id, client, description, flightDate, airline, nuevoEstado)
+                                                }}
+                                            />
+                                            {/* <Button style={{backgroundColor: 'black', color: 'white'}} 
+                                        onClick={(e) => handleClick(e.target.value = row.value)}
+                                    >Eliminar</Button> */}
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            )
+                        }
+                    </TableBody>
+                </TblContainer>
+            </div>  
             {loading
-                ? <LinearProgress color="secondary" />
+                ? <LinearProgress color="primary" />
                 :  <br />
             }
             <br /> 
