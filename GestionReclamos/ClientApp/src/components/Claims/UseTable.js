@@ -12,19 +12,28 @@ import { useState, useEffect } from 'react';
 
 const useStyles = makeStyles(theme => ({
     table: {
+        tableLayout:'fixed',
+        width: '100%',
+      
         marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(5),
         '& thead th': {
             fontWeight: '600',
             color: '#3445db',
             backgroundColor: '#ddf0fd',
+            
         },
         '& body tbody td': {
-            fontWeight: '300',
+            fontWeight: '230',
+            size: 'small',
+            
         },
         '& tbody tr:hover': {
             backgroundColor: '#fefbed',
             cursor: 'pointer',
         },
+        marginLeft: theme.spacing(0),
+        marginRight: theme.spacing(0),
     }
 }));
 export default function useTable(reclamos, cabeceras, filterFunct) {
@@ -50,7 +59,7 @@ export default function useTable(reclamos, cabeceras, filterFunct) {
                 <TableRow>
                     {
                         cabeceras.map(itemCabecera => (
-                            <TableCell key={itemCabecera.id}
+                            <TableCell key={itemCabecera.id} style={{ width: itemCabecera.width }}
                                 sortDirection={orderBy === itemCabecera.id ? order : false}>
                                 {itemCabecera.disableSorting ? itemCabecera.label :
                                     <TableSortLabel

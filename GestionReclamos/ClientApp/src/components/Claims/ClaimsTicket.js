@@ -26,16 +26,16 @@ import useTable from "../Claims/UseTable";
 
 
 const cabeceras = [
-    { id: 'id', label: 'Reclamo' },
-    { id: 'ticket', label: 'Ticket' },
-    { id: 'fechaCreacion', label: 'Fecha Creación', disableSorting: 'true' },
-    { id: 'correo', label: 'Correo Asociado', disableSorting: 'true' },
-    { id: 'descripcion', label: 'Descripción', disableSorting: 'true' },
-    { id: 'fechaVuel', label: 'Fecha Vuelo', disableSorting: 'true' },
-    { id: 'aerolinea', label: 'Aerolínea' },
-    { id: 'ultimaModificacion', label: 'Última Modificación', disableSorting: 'true' },
-    { id: 'estado', label: 'Estado' },
-    { id: 'acciones', label: 'Acciones', disableSorting: 'true' },
+    { id: 'id', label: 'Reclamo', width: '80px' },
+    { id: 'ticket', label: 'Ticket', width: '80px' },
+    { id: 'fechaCreacion', label: 'Fecha Creación', width: '180px' , disableSorting: 'true' },
+    { id: 'correo', label: 'Correo Asociado', width: '180px' , disableSorting: 'true' },
+    { id: 'descripcion', label: 'Descripción', width: '180px' , disableSorting: 'true' },
+    { id: 'fechaVuel', label: 'Fecha Vuelo', width: '180px' , disableSorting: 'true' },
+    { id: 'aerolinea', label: 'Aerolínea', width: '100px' } ,
+    { id: 'ultimaModificacion', label: 'Última Modificación', width: '150px', disableSorting: 'true' },
+    { id: 'estado', label: 'Estado', width: '80px' } ,
+    { id: 'acciones', label: 'Acciones', disableSorting: 'true', width: '130px' } ,
 
 ]
 
@@ -85,6 +85,15 @@ function ClaimsTicket(props) {
             left: '30px',
             position: 'absolut',
             margin: theme.spacing(1),
+        },
+        botones: {
+            borderRadius: '25px',
+            border: '2px outset lightGray',
+            fontSize: 'x-small',
+            width: 'inherit',
+            margin: '3px auto',
+            padding:'3px',
+
         }
     }));
     /*const classes = useStyles();*/
@@ -416,8 +425,8 @@ function ClaimsTicket(props) {
             </Collapse>
 
 
-            <br />
-            <div className="botones" style={{ clear: 'both' }}>
+
+            <div className={classesOne.botones}>
                 <button
 
                     type="submit"
@@ -482,7 +491,7 @@ function ClaimsTicket(props) {
             </div>
 
 
-            {/*          <TableContainer component={Paper}>
+            {/*          <TableContainer component={Paper} >
                 <Table className={classes.table} aria-label="simple table">
                     <TableHead>
                         <TableRow>
@@ -504,7 +513,7 @@ function ClaimsTicket(props) {
             <div></div>
             <div >
                 <TblPagination label="Cant.Reclamos" />
-                <TblContainer >
+                <TblContainer  >
  
                     <TblHeader />
                     <TableBody>
@@ -512,16 +521,16 @@ function ClaimsTicket(props) {
                             reclamosFiltrados().map(item =>
                                 (
                                     <TableRow key={item.id}>
-                                        <TableCell>{item.id}</TableCell>
-                                        <TableCell>{item.ticket}</TableCell>
-                                        <TableCell>{item.fechaCreacion}</TableCell>
-                                        <TableCell>{item.cliente}</TableCell>
-                                        <TableCell>{item.descripcion}</TableCell>
-                                        <TableCell>{item.fechaVuelo}</TableCell>
-                                        <TableCell>{item.aerolinea}</TableCell>
-                                        <TableCell>{item.ultimaModificacion}</TableCell>
-                                        <TableCell>{item.estado}</TableCell>
-                                        <TableCell>
+                                        <TableCell style={{ width:'80px'}}>{item.id}</TableCell>
+                                        <TableCell style={{ width: '80px' }}>{item.ticket}</TableCell>
+                                        <TableCell style={{ width: '180px' }}>{item.fechaCreacion}</TableCell>
+                                        <TableCell style={{width: '180px' }}>{item.cliente}</TableCell>
+                                        <TableCell style={{ width: '180px' }}>{item.descripcion}</TableCell>
+                                        <TableCell style={{ width: '180px' }}>{item.fechaVuelo}</TableCell>
+                                        <TableCell style={{ width: '100px' }}>{item.aerolinea}</TableCell>
+                                        <TableCell style={{ width: '150px' }}>{item.ultimaModificacion}</TableCell>
+                                        <TableCell style={{ width: '80px' }}>{item.estado}</TableCell>
+                                        <TableCell style={{ width: '130px' }}>
                                             <FormDialogTicket claim={item}
                                                 estados={state.estados}
                                                 title={`Reclamo con identificador: ${item.id}`}
