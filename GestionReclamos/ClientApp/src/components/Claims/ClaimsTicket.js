@@ -94,6 +94,9 @@ function ClaimsTicket(props) {
             margin: '3px auto',
             padding:'3px',
 
+        },
+        buscadores: {
+            border:'7px',
         }
     }));
     /*const classes = useStyles();*/
@@ -471,25 +474,25 @@ function ClaimsTicket(props) {
                         flightDate={FlightDate}
                     />
                 </div>
-                <div>
-                    <toolbar>
-                        <Controls.Input
-                            label="Buscar Mail de Cliente"
-                            className={classesOne.searchInput}
-                            onChange={handleSearch}
-                        />
-                    </toolbar>
-                    <toolbar>
-                        <Controls.Input
-                            label="Buscar por ID"
-                            className={classesOne.searchInput}
-                            onChange={handleSearchID}
-                        />
-                    </toolbar>
-
-                </div>
+               
             </div>
-
+            <div className={classesOne.buscadores} >
+                <toolbar>
+                    <Controls.Input
+                        label="Buscar Mail de Cliente"
+                        className={classesOne.searchInput}
+                        onChange={handleSearch}
+                    />
+                </toolbar>
+                <toolbar>
+                    <Controls.Input
+                        label="Buscar por ID"
+                        className={classesOne.searchInput}
+                        onChange={handleSearchID}
+                    />
+                </toolbar>
+                <TblPagination label="Cant.Reclamos" />
+            </div>
 
             {/*          <TableContainer component={Paper} >
                 <Table className={classes.table} aria-label="simple table">
@@ -512,7 +515,7 @@ function ClaimsTicket(props) {
             </TableContainer>*/}
             <div></div>
             <div >
-                <TblPagination label="Cant.Reclamos" />
+                
                 <TblContainer  >
  
                     <TblHeader />
