@@ -463,10 +463,10 @@ function ClaimsCar(props) {
                 </Table>
             </TableContainer>
 
-            {loading
+            {/* {loading
                 ? <LinearProgress color="secondary" />
                 :  <br />
-            }
+            } */}
 
             <br />                        
         </div>
