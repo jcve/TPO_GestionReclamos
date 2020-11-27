@@ -242,7 +242,8 @@ export default function FormDialogCreateClaimCar(props) {
                 value={brand}
                 onChange={(e)=> setBrand(e.target.value)}
               />
-              <Select 
+                      <Select
+                          style={{ margin: '20px 0px 0px 0px', padding:'0px' }}
                 margin="dense"
                 id="airport"
                 label="Aeropuerto asociado"

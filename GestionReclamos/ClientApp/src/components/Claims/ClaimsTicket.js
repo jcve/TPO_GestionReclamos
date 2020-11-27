@@ -51,7 +51,7 @@ function ClaimsTicket(props) {
     const [postsPerPage, setPostsPerPage] = useState(5);
 
     const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     const [severityAlert, setSeverityAlert] = useState('');
     const [messageAlert, setMessageAlert] = useState('');
@@ -524,15 +524,15 @@ function ClaimsTicket(props) {
                             reclamosFiltrados().map(item =>
                                 (
                                     <TableRow key={item.id}>
-                                        <TableCell style={{ width:'80px'}}>{item.id}</TableCell>
-                                        <TableCell style={{ width: '80px' }}>{item.ticket}</TableCell>
+                                        <TableCell style={{ width: '80px', fontWeight: 'bold' }}>{item.id}</TableCell>
+                                        <TableCell style={{ width: '80px', fontWeight: 'bold'  }}>{item.ticket}</TableCell>
                                         <TableCell style={{ width: '180px' }}>{item.fechaCreacion}</TableCell>
                                         <TableCell style={{width: '180px' }}>{item.cliente}</TableCell>
                                         <TableCell style={{ width: '180px' }}>{item.descripcion}</TableCell>
                                         <TableCell style={{ width: '180px' }}>{item.fechaVuelo}</TableCell>
                                         <TableCell style={{ width: '100px' }}>{item.aerolinea}</TableCell>
                                         <TableCell style={{ width: '150px' }}>{item.ultimaModificacion}</TableCell>
-                                        <TableCell style={{ width: '80px' }}>{item.estado}</TableCell>
+                                         <TableCell style={{ width: '80px', fontWeight: 'bold'  }}>{item.estado}</TableCell>
                                         <TableCell style={{ width: '130px' }}>
                                             <FormDialogTicket claim={item}
                                                 estados={state.estados}

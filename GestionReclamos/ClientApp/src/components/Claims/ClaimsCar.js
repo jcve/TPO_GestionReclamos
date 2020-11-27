@@ -21,7 +21,24 @@ import FormDialogCreateClaimCar from "../Common/FormDialogCreateClaimCar";
 import Alert from '@material-ui/lab/Alert';
 import Collapse from '@material-ui/core/Collapse';
 
+
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Controls from "../controls/Controls";
+import useTable from "../Claims/UseTable";
+
+const cabeceras = [
+    { id: 'id', label: 'Id', width: '50px' },
+    { id: 'airport', label: 'Aeropuerto', width: '80px', disableSorting: 'true' },
+    { id: 'description', label: 'Descripción', width: '100px', disableSorting: 'true' },
+    { id: 'fechaModificacion', label: 'Modificación', width: '120px', disableSorting: 'true' },
+    { id: 'client', label: 'Correo Asociado', width: '120px', disableSorting: 'true' },
+    { id: 'brand', label: 'Marca', width: '60px', disableSorting: 'true' },
+    { id: 'model', label: 'Modelo', width: '60px', disableSorting: 'true' },
+    { id: 'plate', label: 'Patente', width: '60px', disableSorting: 'true'},
+    { id: 'state', label: 'Estado', width: '80px', disableSorting: 'false' },
+    { id: 'accion', label: 'Acciones', disableSorting: 'true', width: '100px' },
+
+]
 
 function ClaimsCar(props) {
     const [state, setState] = useState({
@@ -35,20 +52,52 @@ function ClaimsCar(props) {
     const [postsPerPage, setPostsPerPage] = useState(5);
 
     const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     const [severityAlert, setSeverityAlert] = useState('');
     const [messageAlert, setMessageAlert] = useState('');
 
+    const [filterFunct, setFilterFunct] = useState({ fn: items => { return items; } })
+
+    const {
+        TblContainer,
+        TblHeader,
+        TblPagination,
+        reclamosFiltrados,
+    } = useTable(state.claims, cabeceras, filterFunct);
+
+
     const useStyles = makeStyles({
-        table: {
-            minWidth: 650,
-        },
+  
 
     });
+    const useStylesOne = makeStyles(theme => ({
+        pageContent: {
+            margin: theme.spacing(0),
+            padding: theme.spacing(0)
+        },
+        searchInput: {
+            width: '20%',
+            float: 'left',
+            left: '30px',
+            position: 'absolut',
+            margin: theme.spacing(1),
+        },
+        botones: {
+            borderRadius: '25px',
+            border: '2px outset lightGray',
+            fontSize: 'x-small',
+            width: 'inherit',
+            margin: '3px auto',
+            padding: '3px',
 
+        },
+        buscadores: {
+            border: '7px',
+        }
+    }));
     const classes = useStyles();
-
+    const classesOne = useStylesOne();
     useEffect(() => {
         GetStates()
         GetInfo()
@@ -387,7 +436,27 @@ function ClaimsCar(props) {
     function refreshPage() {
         window.location.reload(false);
     }
-
+    const handleSearch = e => {
+        let target = e.target;
+        setFilterFunct({
+            fn: items => {
+                if (target.value == "")
+                    return items;
+                else
+                    return items.filter(x => x.cliente.toLowerCase().includes((target.value).toLowerCase()))
+            }
+        })
+    }
+    const handleSearchID = e => {
+        let target = e.target;
+        setFilterFunct({
+            fn: items => {
+                if (target.value == "") return items;
+                else
+                    return items.filter(y => y.id.toString().includes(target.value.toString()))
+            }
+        })
+    }
 
     return (
         <div>
@@ -398,9 +467,9 @@ function ClaimsCar(props) {
                 </Alert>
             </Collapse>
 
-            <br />
+       
 
-            <div className="botones" style={{ clear: 'both' }}>
+            <div className={classesOne.botones}>
                 <button
 
                     type="submit"
@@ -434,14 +503,28 @@ function ClaimsCar(props) {
 
                 />
                 </div>
-                <div>
-                    <Pagination />
-                </div>
+            </div>
+            <div className={classesOne.buscadores} >
+                <toolbar>
+                    <Controls.Input
+                        label="Buscar Mail de Cliente"
+                        className={classesOne.searchInput}
+                        onChange={handleSearch}
+                    />
+                </toolbar>
+                <toolbar>
+                    <Controls.Input
+                        label="Buscar por ID"
+                        className={classesOne.searchInput}
+                        onChange={handleSearchID}
+                    />
+                </toolbar>
+                <TblPagination label="Cant.Reclamos" />
             </div>
 
-            <br />
 
-            <br></br>
+
+            {/*
             <TableContainer component={Paper}>
                 <Table className={classes.table} aria-label="simple table">
                     <TableHead>
@@ -461,8 +544,49 @@ function ClaimsCar(props) {
                     </TableHead>
                     <ClaimList />
                 </Table>
-            </TableContainer>
+            </TableContainer>*/}
+            <div >
 
+                <TblContainer  >
+
+                    <TblHeader />
+                    <TableBody>
+                        {
+                            reclamosFiltrados().map(item =>
+                                (
+                                    <TableRow key={item.id}>
+                                        <TableCell style={{ width: '50px', fontWeight:'bold' }}>{item.id}</TableCell>
+                                        <TableCell style={{ width: '80px' }}>{item.aeropuerto}</TableCell>
+                                        <TableCell style={{ width: '100px' }}>{item.descripcion}</TableCell>
+                                        <TableCell style={{ width: '120px' }}>{item.ultimaModificacion}</TableCell>
+                                        <TableCell style={{ width: '120px' }}>{item.cliente}</TableCell>
+                                        <TableCell style={{ width: '60px' }}>{item.marca}</TableCell>
+                                        <TableCell style={{ width: '60px' }}>{item.modelo}</TableCell>
+                                        <TableCell style={{ width: '60px' }}>{item.patente}</TableCell>
+                                        <TableCell style={{ width: '80px', fontWeight: 'bold' }}>{item.estado}</TableCell>
+                                        <TableCell style={{ width: '100px' }}>
+                                            <FormDialog claim={item}
+                                                estados={state.estados}
+                                                title={`Reclamo con identificador: ${item.id}`}
+                                                buttontext='Modificar'
+                                                content='Modifique los campos necesarios'
+                                                apicallstate={(id, client, description, plate, model, brand, airport, nuevoEstado) => {
+                                                    APICallState(id, client, description, plate, model, brand, airport, nuevoEstado)
+                                                }}
+                                            />
+                                            {/* <Button style={{backgroundColor: 'black', color: 'white'}} 
+                                        onClick={(e) => handleClick(e.target.value = row.value)}
+                                    >Eliminar</Button> */}
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            )
+                        }
+                    </TableBody>
+                </TblContainer>
+               
+            </div> 
+            
             {loading
                 ? <LinearProgress color="secondary" />
                 :  <br />

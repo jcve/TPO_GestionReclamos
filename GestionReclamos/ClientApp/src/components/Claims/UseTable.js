@@ -25,8 +25,7 @@ const useStyles = makeStyles(theme => ({
         },
         '& body tbody td': {
             fontWeight: '230',
-            size: 'small',
-            
+            size: 'small',            
         },
         '& tbody tr:hover': {
             backgroundColor: '#fefbed',
