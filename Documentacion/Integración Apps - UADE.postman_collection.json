@@ -1,0 +1,744 @@
+{
+	"info": {
+		"_postman_id": "7dbcf21d-b13d-47bf-bd58-0c006f1673ab",
+		"name": "Integración Apps - UADE",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Integraciones",
+			"item": [
+				{
+					"name": "!Ventas api/VerTickets/{IdTicket}",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "{{TOKEN}}"
+							},
+							{
+								"key": "client_id",
+								"type": "text",
+								"value": "396e7d8045b142e18fe0623550f52ca8"
+							},
+							{
+								"key": "client_secret",
+								"type": "text",
+								"value": "872D4cE41D14414Fbb7f7D8816a66339"
+							}
+						],
+						"url": {
+							"raw": "https://uade-integracion-de-aplicaciones.us-e2.cloudhub.io/api/verTickets/10007",
+							"protocol": "https",
+							"host": [
+								"uade-integracion-de-aplicaciones",
+								"us-e2",
+								"cloudhub",
+								"io"
+							],
+							"path": [
+								"api",
+								"verTickets",
+								"10007"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "!Ventas api/verTickets",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "{{TOKEN}}"
+							},
+							{
+								"key": "client_id",
+								"type": "text",
+								"value": "396e7d8045b142e18fe0623550f52ca8"
+							},
+							{
+								"key": "client_secret",
+								"type": "text",
+								"value": "872D4cE41D14414Fbb7f7D8816a66339"
+							}
+						],
+						"url": {
+							"raw": "https://uade-integracion-de-aplicaciones.us-e2.cloudhub.io/api/verTickets",
+							"protocol": "https",
+							"host": [
+								"uade-integracion-de-aplicaciones",
+								"us-e2",
+								"cloudhub",
+								"io"
+							],
+							"path": [
+								"api",
+								"verTickets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "!Itinerarios Itinerarios/aeropuertos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://itinerarios-back.herokuapp.com/itinerarios/aeropuertos",
+							"protocol": "http",
+							"host": [
+								"itinerarios-back",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"itinerarios",
+								"aeropuertos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "!SSO /Usuarios",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "EFC87CE73E81B2DAE0"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"nombre\": \"\",\r\n\"apellido\": \"C\",\r\n\"usuario\": \"test_reclamos2\",\r\n\"password\": \"Test_reclamos123!\",\r\n\"mail\": \"test_reclamos@mail.com\",\r\n\"fecha_nacimiento\": \"20200101\",\r\n\"telefono\": \"01100000000\",\r\n\"enable\": true,\r\n\"fechaAlta\": \"20200101\",\r\n\"fechaBaja\": null,\r\n\"propiedades\": null\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://ssoia.herokuapp.com/Usuarios",
+							"protocol": "https",
+							"host": [
+								"ssoia",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"Usuarios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "!SSO /Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"type": "text",
+								"value": "EFC87CE73E81B2DAE0"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"username\": \"test_reclamos\",\r\n\"password\": \"Test_reclamos123!\"\r\n }\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://ssoia.herokuapp.com/Login",
+							"protocol": "https",
+							"host": [
+								"ssoia",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"Login"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Vehiculos",
+			"item": [
+				{
+					"name": "Claim/Car/Airports - Obtener aeropuertos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://gestionreclamos.herokuapp.com/api/Claim/Car/Airports",
+							"protocol": "https",
+							"host": [
+								"gestionreclamos",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"Claim",
+								"Car",
+								"Airports"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Claim/Car/New - Crear reclamo auto",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"client\": \"jcvonelm@gmail.com\",\r\n  \"description\": \"El auto estaba roto\",\r\n  \"plate\": \"KLO 908\",\r\n  \"model\": \"Hilux\",\r\n  \"brand\": \"Toyota\",\r\n  \"airport\": \"Ezeiza\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://gestionreclamos.herokuapp.com/api/Claim/Car/New",
+							"protocol": "https",
+							"host": [
+								"gestionreclamos",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"Claim",
+								"Car",
+								"New"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Claim/Car/Modify - Modificar reclamo auto",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"client\": \"jcvonelm@gmail.com\",\r\n  \"description\": \"El auto estaba roto\",\r\n  \"plate\": \"KLO 908\",\r\n  \"model\": \"Hilux\",\r\n  \"brand\": \"Toyota\",\r\n  \"airport\": \"Ezeiza\",\r\n  \"id\": 361,\r\n  \"state\": \"En progreso\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://gestionreclamos.herokuapp.com/api/Claim/Car/Modify",
+							"protocol": "https",
+							"host": [
+								"gestionreclamos",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"Claim",
+								"Car",
+								"Modify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Claim/Car/GetAll - Obtener todos los reclamos auto",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://gestionreclamos.herokuapp.com/api/Claim/Car/GetAll",
+							"protocol": "https",
+							"host": [
+								"gestionreclamos",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"Claim",
+								"Car",
+								"GetAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Claim/Car/Information - Info reclamos autos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://gestionreclamos.herokuapp.com/api/Claim/Car/Information",
+							"protocol": "https",
+							"host": [
+								"gestionreclamos",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"Claim",
+								"Car",
+								"Information"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Pasajes",
+			"item": [
+				{
+					"name": "Claim/Ticket/Create - Crear reclamo ticket (EXTERNO)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"client\": \"jcvonelm@gmail.com\",\r\n  \"description\": \"\",\r\n  \"ticket\": 10064\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://gestionreclamos.herokuapp.com/api/Claim/Ticket/Create",
+							"protocol": "https",
+							"host": [
+								"gestionreclamos",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"Claim",
+								"Ticket",
+								"Create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Claim/Ticket/Modify - Modificar reclamo ticket",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"client\": \"a@mail.com\",\r\n  \"description\": \"\",\r\n  \"ticket\": 10064,\r\n  \"id\": 201,\r\n  \"state\": \"En progreso\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://gestionreclamos.herokuapp.com/api/Claim/Ticket/Modify",
+							"protocol": "https",
+							"host": [
+								"gestionreclamos",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"Claim",
+								"Ticket",
+								"Modify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Claim/Ticket/New - Crear reclamo ticket",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"client\": \"jcvonelm@gmail.com\",\r\n  \"description\": \"\",\r\n  \"ticket\": 1007\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://gestionreclamos.herokuapp.com/api/Claim/Ticket/New",
+							"protocol": "https",
+							"host": [
+								"gestionreclamos",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"Claim",
+								"Ticket",
+								"New"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Claim/Ticket/GetTicket - Obtener ticket pre-crear",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"client\": \"\",\r\n  \"description\": \"\",\r\n  \"ticket\": 10061\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://gestionreclamos.herokuapp.com/api/Claim/Ticket/GetTicket",
+							"protocol": "https",
+							"host": [
+								"gestionreclamos",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"Claim",
+								"Ticket",
+								"GetTicket"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Claim/Ticket/GetByTicket/{IdTicket} - Obtener reclamo por ticket",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://gestionreclamos.herokuapp.com/api/Claim/Ticket/GetByTicket/10007",
+							"protocol": "https",
+							"host": [
+								"gestionreclamos",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"Claim",
+								"Ticket",
+								"GetByTicket",
+								"10007"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Claim/Ticket/Get/{IdClaim} - Obtener reclamo ticket por id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://gestionreclamos.herokuapp.com/api/Claim/Ticket/Get/91",
+							"protocol": "http",
+							"host": [
+								"gestionreclamos",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"Claim",
+								"Ticket",
+								"Get",
+								"91"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Claim/Ticket/GetAll - Obtener todos los reclamos ticket",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://gestionreclamos.herokuapp.com/api/Claim/Ticket/GetAll",
+							"protocol": "https",
+							"host": [
+								"gestionreclamos",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"Claim",
+								"Ticket",
+								"GetAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Claim/Ticket/Information - Info reclamos ticket",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://gestionreclamos.herokuapp.com/api/Claim/Ticket/Information",
+							"protocol": "https",
+							"host": [
+								"gestionreclamos",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"Claim",
+								"Ticket",
+								"Information"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Cuenta/Otro",
+			"item": [
+				{
+					"name": "Account/SignUp - Registro",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\" : \"aaa\",\r\n    \"Surname\" : \"aa\",\r\n    \"Mail\" : \"aa2@gmail.com\",\r\n    \"Birthday\" : \"20200101\",\r\n    \"Phone\": \"01101010101\",\r\n    \"Username\" : \"test\",\r\n    \"Password\" : \"Test123!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://gestionreclamos.herokuapp.com/api/Account/Signup",
+							"protocol": "https",
+							"host": [
+								"gestionreclamos",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"Account",
+								"Signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Account/Login - Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"test_reclamos\",\r\n  \"password\": \"Test_reclamos123!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://gestionreclamos.herokuapp.com/api/Account/Login",
+							"protocol": "https",
+							"host": [
+								"gestionreclamos",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"Account",
+								"Login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "State/GetAll - Obtener todos los estados",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://gestionreclamos.herokuapp.com/api/State/GetAll",
+							"protocol": "https",
+							"host": [
+								"gestionreclamos",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"State",
+								"GetAll"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
