@@ -87,8 +87,8 @@ function ClaimsTicket(props) {
             margin: theme.spacing(1),
         },
         botones: {
-            borderRadius: '25px',
-            border: '2px outset lightGray',
+            // borderRadius: '25px',
+            // border: '2px outset lightGray',
             fontSize: 'x-small',
             width: 'inherit',
             margin: '3px auto',
@@ -428,7 +428,7 @@ function ClaimsTicket(props) {
             </Collapse>
 
 
-
+            <br></br>
             <div className={classesOne.botones}>
                 <button
 
@@ -474,7 +474,7 @@ function ClaimsTicket(props) {
                         flightDate={FlightDate}
                     />
                 </div>
-               
+               <br></br>
             </div>
             <div className={classesOne.buscadores} >
                 <toolbar>
@@ -554,10 +554,10 @@ function ClaimsTicket(props) {
                     </TableBody>
                 </TblContainer>
             </div>  
-            {loading
+            {/* {loading
                 ? <LinearProgress color="primary" />
                 :  <br />
-            }
+            } */}
             <br /> 
 
         </div>
