@@ -84,8 +84,8 @@ function ClaimsCar(props) {
             margin: theme.spacing(1),
         },
         botones: {
-            borderRadius: '25px',
-            border: '2px outset lightGray',
+            // borderRadius: '25px',
+            // border: '2px outset lightGray',
             fontSize: 'x-small',
             width: 'inherit',
             margin: '3px auto',
@@ -468,7 +468,7 @@ function ClaimsCar(props) {
             </Collapse>
 
        
-
+            <br></br>
             <div className={classesOne.botones}>
                 <button
 
@@ -504,6 +504,7 @@ function ClaimsCar(props) {
                 />
                 </div>
             </div>
+            <br></br>
             <div className={classesOne.buscadores} >
                 <toolbar>
                     <Controls.Input
