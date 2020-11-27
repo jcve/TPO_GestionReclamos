@@ -85,14 +85,14 @@ namespace GestionReclamos.Controllers
                         var dbSetTicketClaims = _context.Set<ReclamoPasaje>();
                         var nuevoReclamo = new ReclamoPasaje
                         {
-                            FechaCreacion = DateTime.Now,
+                            FechaCreacion = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("America/Argentina/Buenos_Aires")),
                             Ticket = (int)flight.Ticket,
                             IdCliente = clientId,
                             Descripcion = claim.Description,
                             Aerolinea = flight.Airline,
                             FechaVuelo = (DateTime)flight.FlightDate,
                             IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == "Nuevo").FirstOrDefault().Id,
-                            UltimaModificacion = DateTime.Now
+                            UltimaModificacion = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("America/Argentina/Buenos_Aires"))
                         };
 
                         dbSetTicketClaims.Add(nuevoReclamo);
@@ -155,7 +155,7 @@ namespace GestionReclamos.Controllers
                         {
                             claim.Descripcion = reclamo.Description;
                             claim.IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
-                            claim.UltimaModificacion = DateTime.Now;
+                            claim.UltimaModificacion = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("America/Argentina/Buenos_Aires"));
 
                             dbSetTicketClaims.Update(claim);
 
@@ -199,7 +199,7 @@ namespace GestionReclamos.Controllers
 
                             claim.Descripcion = reclamo.Description;
                             claim.IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
-                            claim.UltimaModificacion = DateTime.Now;
+                            claim.UltimaModificacion = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("America/Argentina/Buenos_Aires"));
 
                             dbSetTicketClaims.Update(claim);
 
@@ -276,14 +276,14 @@ namespace GestionReclamos.Controllers
                             var dbSetTicketClaims = _context.Set<ReclamoPasaje>();
                             var nuevoReclamo = new ReclamoPasaje
                             {
-                                FechaCreacion = DateTime.Now,
+                                FechaCreacion = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("America/Argentina/Buenos_Aires")),
                                 Ticket = (int)flight.Ticket,
                                 IdCliente = clientId,
                                 Descripcion = claim.Description,
                                 Aerolinea = flight.Airline,
                                 FechaVuelo = (DateTime)flight.FlightDate,
                                 IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == "Nuevo").FirstOrDefault().Id,
-                                UltimaModificacion = DateTime.Now
+                                UltimaModificacion = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("America/Argentina/Buenos_Aires"))
                             };
 
                             dbSetTicketClaims.Add(nuevoReclamo);

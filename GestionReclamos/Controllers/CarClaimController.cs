@@ -65,7 +65,7 @@ namespace GestionReclamos.Controllers
                 var dbSetCarClaims = _context.Set<ReclamoAuto>();
                 var nuevoReclamo = new ReclamoAuto
                 {
-                    FechaCreacion = DateTime.Now,
+                    FechaCreacion = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("America/Argentina/Buenos_Aires")),
                     IdCliente = idCliente,
                     Descripcion = reclamo.Description,
                     Patente = reclamo.Plate,
@@ -73,7 +73,7 @@ namespace GestionReclamos.Controllers
                     Marca = reclamo.Brand,
                     Aeropuerto = reclamo.Airport,
                     IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == "Nuevo").FirstOrDefault().Id,
-                    UltimaModificacion = DateTime.Now
+                    UltimaModificacion = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("America/Argentina/Buenos_Aires"))
                 };
 
                 dbSetCarClaims.Add(nuevoReclamo);
@@ -182,7 +182,7 @@ namespace GestionReclamos.Controllers
                         claim.Marca = reclamo.Brand;
                         claim.Aeropuerto = reclamo.Airport;
                         claim.IdEstado = _context.Set<Estado>().Where(e => e.Descripcion == reclamo.State).FirstOrDefault().Id;
-                        claim.UltimaModificacion = DateTime.Now;
+                        claim.UltimaModificacion = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("America/Argentina/Buenos_Aires"));
 
                         dbSetCarClaims.Update(claim);
 
